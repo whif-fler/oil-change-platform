@@ -1,6 +1,11 @@
 import { QuoteBuilder } from "@/components/quote-builder";
+import type { PricingBreakdown } from "@/lib/types";
 
-export function QuoteBuilderSection() {
+interface QuoteBuilderSectionProps {
+  onContinue?: (pricing: PricingBreakdown) => void;
+}
+
+export function QuoteBuilderSection({ onContinue }: QuoteBuilderSectionProps) {
   return (
     <section
       id="quote-builder"
@@ -16,7 +21,7 @@ export function QuoteBuilderSection() {
             an&nbsp;estimated&nbsp;price.
           </p>
         </div>
-        <QuoteBuilder />
+        <QuoteBuilder onContinue={onContinue} />
       </div>
     </section>
   );

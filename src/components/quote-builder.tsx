@@ -114,7 +114,11 @@ const FREQUENCY_DESCRIPTIONS: Record<Frequency, string> = {
 
 // ─── Component ────────────────────────────────────────────
 
-export function QuoteBuilder() {
+interface QuoteBuilderProps {
+  onContinue?: (pricing: PricingBreakdown) => void;
+}
+
+export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
   const [state, dispatch] = useReducer(quoteReducer, INITIAL_STATE);
 
   let pricing: PricingBreakdown;
@@ -129,6 +133,7 @@ export function QuoteBuilder() {
   }
 
   const handleContinue = () => {
+    onContinue?.(pricing);
     const el = document.getElementById("contact");
     el?.scrollIntoView({ behavior: "smooth" });
   };
