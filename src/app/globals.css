@@ -1,0 +1,267 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design Tokens — Oil Change Platform
+ *
+ * All values below are the single source of truth.
+ * Tailwind utility classes pull from these via @theme.
+ *
+ * 1. COLORS
+ *    primary        #D8FF34   Lime CTA — bg only, never text/border on light
+ *    primary-fg     #090A0A   Dark text on lime
+ *    accent         #17241C   Dark green — secondary actions, dark surfaces
+ *    accent-fg      #F4F3EF   Light text on dark green
+ *    surface        #F7F7F3   Page background
+ *    surface-raised #FFFFFF   Cards, panels, modals
+ *    surface-muted  #F5F7F1   Soft fill, disabled states
+ *    surface-dark   #17241C   Hero, service section backgrounds
+ *    text           #090A0A   Primary body text
+ *    text-muted     #666B64   Secondary / caption text
+ *    text-on-dark   #F4F3EF   Body text on dark surfaces
+ *    border         #E3E7DF   Default borders
+ *    focus          #4E6800   Focus rings
+ *    destructive    #8B3A32   Error, delete, danger
+ *    success        #2E7D32   Confirmation, positive state
+ *
+ * 2. TYPOGRAPHY (clamp: min 375px → max 1440px)
+ *    font-family    Manrope, sans-serif (weights 400/600/700/800)
+ *    h1             clamp(2.5rem, 1.55rem + 3.09vw, 4.5rem)  40→72px  lh 1.05  ls -0.04em  w 600
+ *    h2             clamp(2rem, 1.41rem + 2.27vw, 3.5rem)     32→56px  lh 1.1   ls -0.03em  w 600
+ *    h3             clamp(1.5rem, 1.23rem + 1.09vw, 2rem)     24→32px  lh 1.2   ls normal   w 600
+ *    h4             clamp(1.25rem, 1.14rem + 0.45vw, 1.5rem)  20→24px  lh 1.3   ls normal   w 600
+ *    body           1rem          16px   lh 1.6   w 400
+ *    body-small     0.875rem     14px   lh 1.6   w 400
+ *    caption        min 0.75rem  12px   lh 1.4   w 700
+ *    button/nav     0.875rem     14px   lh 1.4   w 700
+ *
+ * 3. SPACING (4px base: --spacing 0.25rem)
+ *    1: 0.25rem (4px)   5: 1.25rem (20px)   9: 2.25rem (36px)   13: 3.25rem (52px)
+ *    2: 0.5rem  (8px)   6: 1.5rem  (24px)  10: 2.5rem  (40px)   14: 3.5rem  (56px)
+ *    3: 0.75rem (12px)  7: 1.75rem (28px)  11: 2.75rem (44px)   16: 4rem    (64px)
+ *    4: 1rem    (16px)  8: 2rem    (32px)  12: 3rem    (48px)   20: 5rem    (80px)
+ *                                                      shell-px: 1.5rem mobile / 4rem desktop
+ *                                                      section-py: 4rem mobile / 7rem desktop
+ *                                                      shell-max-w: 87.5rem (1400px)
+ *
+ * 4. RADII
+ *    button  0.5rem  (8px)
+ *    input   0.5rem  (8px)
+ *    card    1rem    (16px)
+ *
+ * 5. SHADOWS
+ *    sticky-header  0 1px 0 rgba(9,10,10,0.12)
+ *    dropdown       0 8px 24px rgba(9,10,10,0.12)
+ *    modal          0 34px 90px rgba(9,10,10,0.28)
+ */
+
+@theme inline {
+  /* --- Colors: shadcn mapping --- */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* --- Surfaces (Drew-specific) --- */
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-dark: var(--surface-dark);
+
+  /* --- Text (Drew-specific) --- */
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-text-on-dark: var(--text-on-dark);
+
+  /* --- Focus --- */
+  --color-focus: var(--focus);
+
+  /* --- Success --- */
+  --color-success: var(--success);
+
+  /* --- Shadows --- */
+  --shadow-sticky-header: 0 1px 0 rgba(9, 10, 10, 0.12);
+  --shadow-dropdown: 0 8px 24px rgba(9, 10, 10, 0.12);
+  --shadow-modal: 0 34px 90px rgba(9, 10, 10, 0.28);
+
+  /* --- Radii --- */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* --- Font --- */
+  --font-sans: var(--font-manrope);
+  --font-heading: var(--font-manrope);
+
+  /* --- Typography scale --- */
+  --text-h1: var(--text-h1);
+  --text-h2: var(--text-h2);
+  --text-h3: var(--text-h3);
+  --text-h4: var(--text-h4);
+  --text-body: var(--text-body);
+  --text-body-small: var(--text-body-small);
+  --text-caption: var(--text-caption);
+  --text-button: var(--text-button);
+
+  /* --- Spacing scale --- */
+  --spacing: var(--spacing);
+  --space-1: var(--space-1);
+  --space-2: var(--space-2);
+  --space-3: var(--space-3);
+  --space-4: var(--space-4);
+  --space-5: var(--space-5);
+  --space-6: var(--space-6);
+  --space-8: var(--space-8);
+  --space-10: var(--space-10);
+  --space-12: var(--space-12);
+  --space-16: var(--space-16);
+  --space-20: var(--space-20);
+}
+
+:root {
+  /* --- Core palette --- */
+  --background: #f7f7f3;
+  --foreground: #090a0a;
+
+  /* --- Primary: lime CTA --- */
+  --primary: #d8ff34;
+  --primary-foreground: #090a0a;
+
+  /* --- Secondary / Accent: dark green --- */
+  --secondary: #17241c;
+  --secondary-foreground: #f4f3ef;
+  --accent: #17241c;
+  --accent-foreground: #f4f3ef;
+
+  /* --- Surfaces --- */
+  --surface: #f7f7f3;
+  --surface-raised: #ffffff;
+  --surface-muted: #f5f7f1;
+  --surface-dark: #17241c;
+
+  /* --- Card / Popover --- */
+  --card: #ffffff;
+  --card-foreground: #090a0a;
+  --popover: #ffffff;
+  --popover-foreground: #090a0a;
+
+  /* --- Muted --- */
+  --muted: #f5f7f1;
+  --muted-foreground: #666b64;
+
+  /* --- Text --- */
+  --text: #090a0a;
+  --text-muted: #666b64;
+  --text-on-dark: #f4f3ef;
+
+  /* --- Borders & Inputs --- */
+  --border: #e3e7df;
+  --input: #e3e7df;
+  --ring: #4e6800;
+
+  /* --- Focus --- */
+  --focus: #4e6800;
+
+  /* --- Destructive & Success --- */
+  --destructive: #8b3a32;
+  --success: #2e7d32;
+
+  /* --- Radius base --- */
+  --radius: 0.5rem;
+
+  /* --- Typography (fluid clamp) --- */
+  --text-h1: clamp(2.5rem, 1.55rem + 3.09vw, 4.5rem);
+  --text-h2: clamp(2rem, 1.41rem + 2.27vw, 3.5rem);
+  --text-h3: clamp(1.5rem, 1.23rem + 1.09vw, 2rem);
+  --text-h4: clamp(1.25rem, 1.14rem + 0.45vw, 1.5rem);
+  --text-body: 1rem;
+  --text-body-small: 0.875rem;
+  --text-caption: 0.75rem;
+  --text-button: 0.875rem;
+  --lh-h1: 1.05;
+  --lh-h2: 1.1;
+  --lh-h3: 1.2;
+  --lh-h4: 1.3;
+  --lh-body: 1.6;
+  --lh-button: 1.4;
+  --ls-h1: -0.04em;
+  --ls-h2: -0.03em;
+
+  /* --- Spacing (4px base) --- */
+  --spacing: 0.25rem;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --shell-px-mobile: 1.5rem;
+  --shell-px-desktop: 4rem;
+  --section-py-mobile: 4rem;
+  --section-py-desktop: 7rem;
+  --shell-max-w: 87.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    overflow-wrap: anywhere;
+  }
+  html,
+  body,
+  #next {
+    min-width: 0;
+  }
+  html {
+    @apply font-sans;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* --- Focus visible --- */
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 4px;
+}
+
+/* --- Reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
