@@ -4,6 +4,7 @@ import { Services } from "@/components/sections/services";
 import { HowItWorks } from "@/components/sections/how-it-works";
 import { Frequency } from "@/components/sections/frequency";
 import { QuoteCta } from "@/components/sections/quote-cta";
+import { QuoteBuilderSection } from "@/components/sections/quote-builder-section";
 import { Contact } from "@/components/sections/contact";
 import { Footer } from "@/components/footer";
 
@@ -17,6 +18,7 @@ export default function Home() {
         <HowItWorks />
         <Frequency />
         <QuoteCta />
+        <QuoteBuilderSection />
         <Contact />
       </main>
       <Footer />
