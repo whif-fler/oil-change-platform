@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum EquipmentType {
+  COUNTERTOP_FRYER
+  FLOOR_FRYER
+  FRYER_BANK
+}
+
+enum OilType {
+  CANOLA
+  SUNFLOWER
+  PALM
+  BLEND
+}
+
+enum AddOn {
+  FILTER_REPLACEMENT
+  DEEP_CLEAN
+  WASTE_OIL_DISPOSAL
+}
+
+enum Frequency {
+  ONE_TIME
+  MONTHLY
+}
+
+enum EnquiryStatus {
+  NEW
+  CONTACTED
+  SCHEDULED
+  COMPLETED
+  CANCELLED
+}
+
+enum EnquiryKind {
+  QUESTION
+  SERVICE_REQUEST
+}
+
+model Quotation {
+  id            String        @id @default(cuid())
+  createdAt     DateTime      @default(now())
+  equipmentType EquipmentType
+  oilType       OilType
+  addOns        AddOn[]
+  frequency     Frequency
+  totalMinor    Int
+  currency      String        @db.VarChar(3)
+  breakdown     Json
+  enquiry       Enquiry?
+
+  @@index([createdAt])
+}
+
+model Enquiry {
+  id              String          @id @default(cuid())
+  clientRequestId String          @unique @db.VarChar(64)
+  kind            EnquiryKind     @default(SERVICE_REQUEST)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  name           String          @db.VarChar(100)
+  email          String          @db.VarChar(254)
+  phone          String          @db.VarChar(30)
+  message        String?         @db.VarChar(2000)
+  venueName      String?         @db.VarChar(120)
+  venueAddress   String?         @db.VarChar(300)
+  preferredDate  DateTime?
+  status         EnquiryStatus   @default(NEW)
+  quotationId    String?         @unique
+  quotation      Quotation?      @relation(fields: [quotationId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([quotationId])
+  @@index([status, createdAt])
+}

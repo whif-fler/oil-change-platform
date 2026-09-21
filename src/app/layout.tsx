@@ -10,8 +10,9 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Oil Change Platform",
-  description: "Streamlined oil change service management for modern workshops.",
+  title: "FreshOil — Onsite Cooking-Oil Service",
+  description:
+    "Professional cooking-oil service for restaurants and cafes. Oil changes, deep cleaning, filter replacement, and waste-oil disposal — we come to you.",
 };
 
 export const viewport: Viewport = {
@@ -27,7 +28,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${manrope.variable} antialiased`}>{children}</body>
+      <body className={`${manrope.variable} antialiased`} suppressHydrationWarning>
+        {children}
+      </body>
     </html>
   );
 }
