@@ -47,17 +47,12 @@ export function HowItWorks() {
 
         {/* Horizontal timeline */}
         <div className="relative flex flex-col gap-7 concept:flex-row concept:gap-0">
-          {STEPS.map((step, i) => (
+          {STEPS.map((step) => (
             <div
               key={step.step}
-              className="relative flex-1 px-0 text-left concept:px-5"
+              className="flex-1 px-0 text-left concept:px-5"
             >
-              {/* Connecting line (desktop only, not on first step) */}
-              {i > 0 && (
-                <div className="absolute top-[5px] left-0 right-5 hidden h-px bg-white/15 concept:block" />
-              )}
-
-              <div className="relative z-10 mb-3.5 inline-block bg-surface-dark px-1 text-caption font-extrabold leading-none text-primary">
+              <div className="mb-3.5 inline-block bg-surface-dark px-1 text-caption font-extrabold leading-none text-primary">
                 {String(step.step).padStart(2, "0")}
               </div>
               <h4 className="mb-2 text-[1.05rem] font-bold text-text-on-dark">
