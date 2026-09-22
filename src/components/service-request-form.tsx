@@ -5,7 +5,7 @@ import { CheckCircle, AlertCircle, ArrowRight, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CURRENCY } from "@/config/catalog";
+import { formatCents } from "@/lib/formatting";
 import type { PricingBreakdown } from "@/lib/types";
 
 // ─── Types ────────────────────────────────────────────────
@@ -16,20 +16,12 @@ interface FieldErrors {
   [key: string]: string[];
 }
 
-// ─── Formatting ───────────────────────────────────────────
-
-const currencyFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: CURRENCY,
-  minimumFractionDigits: 2,
-});
-
-function fmtCents(cents: number): string {
-  return currencyFormatter.format(cents / 100);
-}
-
 function todayISO(): string {
-  return new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 // ─── Component ────────────────────────────────────────────
@@ -79,6 +71,15 @@ export function ServiceRequestForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+
+      const contentType = res.headers.get("content-type") ?? "";
+      if (!contentType.includes("application/json")) {
+        setServerError(
+          "The server returned an unexpected response. Please try again.",
+        );
+        setStatus("error");
+        return;
+      }
 
       const data = await res.json();
 
@@ -134,7 +135,7 @@ export function ServiceRequestForm({
                 : "One-time service"}
             </p>
             <p className="mt-2 text-base font-bold text-text">
-              Estimated total: {fmtCents(pricing.totalMinor)}
+              Estimated total: {formatCents(pricing.totalMinor)}
             </p>
             <p className="mt-1 text-xs text-text-muted">
               Final pricing confirmed on submission by the business.
@@ -173,7 +174,7 @@ export function ServiceRequestForm({
         <div className="flex items-center justify-between">
           <span className="text-text-muted">Estimated total</span>
           <span className="text-base font-bold text-text">
-            {fmtCents(pricing.totalMinor)}
+            {formatCents(pricing.totalMinor)}
           </span>
         </div>
         <p className="mt-1 text-xs text-text-muted">
@@ -197,6 +198,7 @@ export function ServiceRequestForm({
                 required
                 autoComplete="name"
                 placeholder="Your name"
+                disabled={status === "submitting"}
                 aria-invalid={!!fieldErrors["name"]}
                 aria-describedby={
                   fieldErrors["name"] ? "error-sr-name" : undefined
@@ -221,6 +223,7 @@ export function ServiceRequestForm({
                 required
                 autoComplete="email"
                 placeholder="you@example.com"
+                disabled={status === "submitting"}
                 aria-invalid={!!fieldErrors["email"]}
                 aria-describedby={
                   fieldErrors["email"] ? "error-sr-email" : undefined
@@ -245,6 +248,7 @@ export function ServiceRequestForm({
                 required
                 autoComplete="tel"
                 placeholder="Your phone number"
+                disabled={status === "submitting"}
                 aria-invalid={!!fieldErrors["phone"]}
                 aria-describedby={
                   fieldErrors["phone"] ? "error-sr-phone" : undefined
@@ -276,6 +280,7 @@ export function ServiceRequestForm({
                 name="venueName"
                 autoComplete="organization"
                 placeholder="Restaurant or cafe name"
+                disabled={status === "submitting"}
                 aria-invalid={!!fieldErrors["venueName"]}
                 aria-describedby={
                   fieldErrors["venueName"] ? "error-sr-venue-name" : undefined
@@ -299,6 +304,7 @@ export function ServiceRequestForm({
                 required
                 autoComplete="street-address"
                 placeholder="Full address"
+                disabled={status === "submitting"}
                 aria-invalid={!!fieldErrors["venueAddress"]}
                 aria-describedby={
                   fieldErrors["venueAddress"]
@@ -331,6 +337,7 @@ export function ServiceRequestForm({
               name="preferredDate"
               type="date"
               min={todayISO()}
+              disabled={status === "submitting"}
               aria-invalid={!!fieldErrors["preferredDate"]}
               aria-describedby={
                 fieldErrors["preferredDate"]
@@ -362,6 +369,7 @@ export function ServiceRequestForm({
             rows={3}
             maxLength={2000}
             placeholder="Anything else we should know?"
+            disabled={status === "submitting"}
             className="flex w-full min-w-0 rounded-lg border border-input bg-transparent px-3 py-2 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
             aria-invalid={!!fieldErrors["message"]}
             aria-describedby={

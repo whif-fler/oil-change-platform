@@ -145,7 +145,11 @@ export function getSessionCookieValue(request: Request): string | null {
     const name = pair.slice(0, eqIdx).trim();
     const value = pair.slice(eqIdx + 1).trim();
     if (name === "session") {
-      return value;
+      try {
+        return decodeURIComponent(value);
+      } catch {
+        return value;
+      }
     }
   }
 

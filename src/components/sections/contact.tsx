@@ -5,6 +5,8 @@ import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
 import { ServiceRequestForm } from "@/components/service-request-form";
 import type { PricingBreakdown } from "@/lib/types";
 
@@ -50,6 +52,15 @@ export function Contact({ submittedQuote, onResetQuote }: ContactProps) {
           body: JSON.stringify(payload),
         });
 
+        const contentType = res.headers.get("content-type") ?? "";
+        if (!contentType.includes("application/json")) {
+          setServerError(
+            "The server returned an unexpected response. Please try again.",
+          );
+          setStatus("error");
+          return;
+        }
+
         const data = await res.json();
 
         if (!res.ok) {
@@ -91,7 +102,7 @@ export function Contact({ submittedQuote, onResetQuote }: ContactProps) {
     );
   }
 
-  // ── General question mode (existing) ────────────────────
+  // ── Success state ───────────────────────────────────────
 
   if (status === "success") {
     return (
@@ -123,63 +134,70 @@ export function Contact({ submittedQuote, onResetQuote }: ContactProps) {
     );
   }
 
+  // ── Contact form ────────────────────────────────────────
+
   return (
     <section
       id="contact"
       className="bg-surface py-[var(--section-py-mobile)] lg:py-[var(--section-py-desktop)]"
     >
       <div className="mx-auto max-w-[var(--shell-max-w)] px-[var(--shell-px-mobile)] lg:px-[var(--shell-px-desktop)]">
-        <div className="mx-auto max-w-lg">
-          <div className="mb-10 text-center">
-            <h2 className="mb-4 text-h2 font-semibold leading-[var(--lh-h2)] tracking-[var(--ls-h2)] text-text">
-              Get in&nbsp;touch
-            </h2>
-            <p className="text-body text-text-muted">
-              Have a question? Send us a message and we&apos;ll get back
-              to&nbsp;you.
-            </p>
-          </div>
+        <div className="mb-10 text-center lg:mb-14">
+          <h2 className="mb-4 text-h2 font-semibold leading-[var(--lh-h2)] tracking-[var(--ls-h2)] text-text">
+            Get in&nbsp;touch
+          </h2>
+          <p className="mx-auto max-w-xl text-body text-text-muted">
+            Have a question about our service? Send us a message and we&apos;ll
+            get back to&nbsp;you.
+          </p>
+        </div>
 
+        <div className="mx-auto grid max-w-4xl gap-10 lg:grid-cols-[1fr_280px] lg:gap-12">
+          {/* Form */}
           <form onSubmit={handleSubmit} noValidate className="space-y-5">
-            <div>
-              <Label htmlFor="contact-name">Name</Label>
-              <Input
-                id="contact-name"
-                name="name"
-                required
-                autoComplete="name"
-                placeholder="Your name"
-                aria-invalid={!!fieldErrors["name"]}
-                aria-describedby={
-                  fieldErrors["name"] ? "error-name" : undefined
-                }
-              />
-              {fieldErrors["name"] && (
-                <p id="error-name" className="mt-1 text-sm text-destructive">
-                  {fieldErrors["name"][0]}
-                </p>
-              )}
-            </div>
+            <div className="grid gap-5 sm:grid-cols-2">
+              <div>
+                <Label htmlFor="contact-name">Name</Label>
+                <Input
+                  id="contact-name"
+                  name="name"
+                  required
+                  autoComplete="name"
+                  placeholder="Your name"
+                  disabled={isPending}
+                  aria-invalid={!!fieldErrors["name"]}
+                  aria-describedby={
+                    fieldErrors["name"] ? "error-name" : undefined
+                  }
+                />
+                {fieldErrors["name"] && (
+                  <p id="error-name" className="mt-1 text-sm text-destructive">
+                    {fieldErrors["name"][0]}
+                  </p>
+                )}
+              </div>
 
-            <div>
-              <Label htmlFor="contact-email">Email</Label>
-              <Input
-                id="contact-email"
-                name="email"
-                type="email"
-                required
-                autoComplete="email"
-                placeholder="you@example.com"
-                aria-invalid={!!fieldErrors["email"]}
-                aria-describedby={
-                  fieldErrors["email"] ? "error-email" : undefined
-                }
-              />
-              {fieldErrors["email"] && (
-                <p id="error-email" className="mt-1 text-sm text-destructive">
-                  {fieldErrors["email"][0]}
-                </p>
-              )}
+              <div>
+                <Label htmlFor="contact-email">Email</Label>
+                <Input
+                  id="contact-email"
+                  name="email"
+                  type="email"
+                  required
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  disabled={isPending}
+                  aria-invalid={!!fieldErrors["email"]}
+                  aria-describedby={
+                    fieldErrors["email"] ? "error-email" : undefined
+                  }
+                />
+                {fieldErrors["email"] && (
+                  <p id="error-email" className="mt-1 text-sm text-destructive">
+                    {fieldErrors["email"][0]}
+                  </p>
+                )}
+              </div>
             </div>
 
             <div>
@@ -191,6 +209,7 @@ export function Contact({ submittedQuote, onResetQuote }: ContactProps) {
                 required
                 autoComplete="tel"
                 placeholder="Your phone number"
+                disabled={isPending}
                 aria-invalid={!!fieldErrors["phone"]}
                 aria-describedby={
                   fieldErrors["phone"] ? "error-phone" : undefined
@@ -205,14 +224,14 @@ export function Contact({ submittedQuote, onResetQuote }: ContactProps) {
 
             <div>
               <Label htmlFor="contact-message">Message</Label>
-              <textarea
+              <Textarea
                 id="contact-message"
                 name="message"
                 required
                 rows={4}
                 maxLength={2000}
                 placeholder="How can we help?"
-                className="flex w-full min-w-0 rounded-lg border border-input bg-transparent px-3 py-2 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                disabled={isPending}
                 aria-invalid={!!fieldErrors["message"]}
                 aria-describedby={
                   fieldErrors["message"] ? "error-message" : undefined
@@ -252,6 +271,34 @@ export function Contact({ submittedQuote, onResetQuote }: ContactProps) {
               )}
             </Button>
           </form>
+
+          {/* Info sidebar */}
+          <aside className="flex flex-col gap-6 text-sm text-text-muted lg:pt-1">
+            <div>
+              <h3 className="mb-1 font-semibold text-text">FreshOil</h3>
+              <p className="leading-relaxed">
+                Onsite cooking-oil service for restaurants and&nbsp;cafés.
+              </p>
+            </div>
+
+            <Separator />
+
+            <div>
+              <p className="mb-1 font-semibold text-text">Email</p>
+              <p>hello@freshoil.com</p>
+            </div>
+
+            <div>
+              <p className="mb-1 font-semibold text-text">Phone</p>
+              <p>(02) 1234 5678</p>
+            </div>
+
+            <Separator />
+
+            <p className="leading-relaxed text-text-muted/80">
+              We aim to respond within one business&nbsp;day.
+            </p>
+          </aside>
         </div>
       </div>
     </section>

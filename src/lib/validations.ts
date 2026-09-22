@@ -90,6 +90,35 @@ export const enquiryPayloadSchema = z.discriminatedUnion("kind", [
   serviceRequestEnquirySchema,
 ]);
 
+// ─── Enquiry status update ────────────────────────────────
+
+export const updateStatusSchema = z.object({
+  status: z.enum(["NEW", "CONTACTED", "SCHEDULED", "COMPLETED", "CANCELLED"]),
+});
+
+// ─── Persisted quotation breakdown ────────────────────────
+
+const addOnCostSchema = z.object({
+  addOn: addOnEnum,
+  costMinor: z.number(),
+});
+
+export const quotationBreakdownSchema = z.object({
+  serviceFeeMinor: z.number(),
+  oilCostMinor: z.number(),
+  addOnCostsMinor: z.array(addOnCostSchema),
+  subtotalMinor: z.number(),
+  discountMinor: z.number(),
+  totalMinor: z.number(),
+  currency: z.string(),
+  config: z.object({
+    equipmentType: equipmentTypeEnum,
+    oilType: oilTypeEnum,
+    addOns: z.array(addOnEnum),
+    frequency: frequencyEnum,
+  }),
+});
+
 // ─── Inferred types ────────────────────────────────────────
 
 export type EnquiryPayloadInput = z.infer<typeof enquiryPayloadSchema>;

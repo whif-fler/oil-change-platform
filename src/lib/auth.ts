@@ -61,10 +61,10 @@ export function verifyPassword(password: string): boolean {
  */
 export function verifyUsername(username: string): boolean {
   const expected = requireEnv("OWNER_USERNAME");
-  return crypto.timingSafeEqual(
-    Buffer.from(username),
-    Buffer.from(expected),
-  );
+  const userBuf = Buffer.from(username);
+  const expectedBuf = Buffer.from(expected);
+  if (userBuf.length !== expectedBuf.length) return false;
+  return crypto.timingSafeEqual(userBuf, expectedBuf);
 }
 
 // ─── Session cookie signing ───────────────────────────────
@@ -183,8 +183,12 @@ export function getSessionUserFromRequest(request: Request): string | null {
   for (const cookie of cookies) {
     const [name, ...rest] = cookie.split("=");
     if (name === SESSION_COOKIE_NAME) {
-      const value = rest.join("=");
-      return verifySessionCookie(value);
+      const raw = rest.join("=");
+      try {
+        return verifySessionCookie(decodeURIComponent(raw));
+      } catch {
+        return verifySessionCookie(raw);
+      }
     }
   }
 

@@ -56,6 +56,8 @@
  *    sticky-header  0 1px 0 rgba(9,10,10,0.12)
  *    dropdown       0 8px 24px rgba(9,10,10,0.12)
  *    modal          0 34px 90px rgba(9,10,10,0.28)
+ *    card           0 2px 12px rgba(23,36,28,0.06)
+ *    card-hover     0 4px 20px rgba(23,36,28,0.1)
  */
 
 @theme inline {
@@ -100,6 +102,8 @@
   --shadow-sticky-header: 0 1px 0 rgba(9, 10, 10, 0.12);
   --shadow-dropdown: 0 8px 24px rgba(9, 10, 10, 0.12);
   --shadow-modal: 0 34px 90px rgba(9, 10, 10, 0.28);
+  --shadow-card: 0 2px 12px rgba(23, 36, 28, 0.06);
+  --shadow-card-hover: 0 4px 20px rgba(23, 36, 28, 0.1);
 
   /* --- Radii --- */
   --radius-sm: calc(var(--radius) * 0.6);
@@ -252,6 +256,18 @@
 :focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 4px;
+}
+
+/* --- Scroll reveal --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.reveal.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* --- Reduced motion --- */

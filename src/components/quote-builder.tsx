@@ -3,8 +3,9 @@
 import { useReducer } from "react";
 import { ArrowRight } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
-import { EQUIPMENT, OIL, ADD_ONS, FREQUENCY, CURRENCY } from "@/config/catalog";
+import { EQUIPMENT, OIL, ADD_ONS, FREQUENCY } from "@/config/catalog";
 import { calculatePricing } from "@/lib/pricing";
+import { formatCents } from "@/lib/formatting";
 import type { EquipmentType, OilType, AddOn, Frequency } from "@/config/catalog";
 import type { PricingBreakdown } from "@/lib/types";
 
@@ -50,64 +51,33 @@ function quoteReducer(state: QuoteState, action: QuoteAction): QuoteState {
   }
 }
 
-// ─── Formatting ───────────────────────────────────────────
+// ─── Human-readable labels (exported for /quote page) ─────
 
-const currencyFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: CURRENCY,
-  minimumFractionDigits: 2,
-});
-
-function fmtCents(cents: number): string {
-  return currencyFormatter.format(cents / 100);
-}
-
-// ─── Human-readable labels ────────────────────────────────
-
-const EQUIPMENT_LABELS: Record<EquipmentType, string> = {
+export const EQUIPMENT_LABELS: Record<EquipmentType, string> = {
   COUNTERTOP_FRYER: "Countertop Fryer",
   FLOOR_FRYER: "Floor Fryer",
   FRYER_BANK: "Fryer Bank",
 };
 
-const EQUIPMENT_DETAILS: Record<EquipmentType, { fee: string; capacity: string }> = {
-  COUNTERTOP_FRYER: { fee: "$15.00 service fee", capacity: "8 L capacity" },
-  FLOOR_FRYER: { fee: "$25.00 service fee", capacity: "15 L capacity" },
-  FRYER_BANK: { fee: "$40.00 service fee", capacity: "30 L capacity" },
-};
-
-const OIL_LABELS: Record<OilType, string> = {
+export const OIL_LABELS: Record<OilType, string> = {
   CANOLA: "Canola",
   SUNFLOWER: "Sunflower",
   PALM: "Palm",
   BLEND: "Blend",
 };
 
-const OIL_PRICES: Record<OilType, string> = {
-  CANOLA: "$8.00 / L",
-  SUNFLOWER: "$7.00 / L",
-  PALM: "$6.00 / L",
-  BLEND: "$6.50 / L",
-};
-
-const ADDON_LABELS: Record<AddOn, string> = {
+export const ADDON_LABELS: Record<AddOn, string> = {
   FILTER_REPLACEMENT: "Filter Replacement",
   DEEP_CLEAN: "Deep Clean",
   WASTE_OIL_DISPOSAL: "Waste Oil Disposal",
 };
 
-const ADDON_PRICES: Record<AddOn, string> = {
-  FILTER_REPLACEMENT: "$5.00",
-  DEEP_CLEAN: "$12.00",
-  WASTE_OIL_DISPOSAL: "$4.00",
-};
-
-const FREQUENCY_LABELS: Record<Frequency, string> = {
+export const FREQUENCY_LABELS: Record<Frequency, string> = {
   ONE_TIME: "One-time",
   MONTHLY: "Monthly",
 };
 
-const FREQUENCY_DESCRIPTIONS: Record<Frequency, string> = {
+export const FREQUENCY_DESCRIPTIONS: Record<Frequency, string> = {
   ONE_TIME: "Single service visit",
   MONTHLY: "Recurring monthly — 10% off",
 };
@@ -133,9 +103,12 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
   }
 
   const handleContinue = () => {
-    onContinue?.(pricing);
-    const el = document.getElementById("contact");
-    el?.scrollIntoView({ behavior: "smooth" });
+    if (onContinue) {
+      onContinue(pricing);
+    } else {
+      const el = document.getElementById("contact");
+      el?.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
@@ -180,7 +153,7 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
                         : "text-text-muted",
                     ].join(" ")}
                   >
-                    {EQUIPMENT_DETAILS[key]!.fee}
+                    {formatCents(EQUIPMENT[key]!.serviceFeeMinor)} service fee
                   </span>
                   <span
                     className={[
@@ -190,7 +163,7 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
                         : "text-text-muted",
                     ].join(" ")}
                   >
-                    {EQUIPMENT_DETAILS[key]!.capacity}
+                    {EQUIPMENT[key]!.capacityLitres} L capacity
                   </span>
                 </label>
               ))}
@@ -234,7 +207,7 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
                         : "text-text-muted",
                     ].join(" ")}
                   >
-                    {OIL_PRICES[key]}
+                    {formatCents(OIL[key]!.pricePerLitreMinor)} / L
                   </span>
                 </label>
               ))}
@@ -307,7 +280,7 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
                           : "text-text-muted",
                       ].join(" ")}
                     >
-                      {ADDON_PRICES[key]}
+                      {formatCents(ADD_ONS[key]!.priceMinor)}
                     </span>
                   </label>
                 );
@@ -376,7 +349,7 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
               <div className="flex items-center justify-between">
                 <span className="text-text-muted">Service fee</span>
                 <span className="font-medium text-text">
-                  {fmtCents(pricing.serviceFeeMinor)}
+                  {formatCents(pricing.serviceFeeMinor)}
                 </span>
               </div>
 
@@ -384,10 +357,10 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
               <div className="flex items-center justify-between">
                 <span className="text-text-muted">
                   Oil ({EQUIPMENT[state.equipmentType]!.capacityLitres}L{" "}
-                  × {fmtCents(OIL[state.oilType]!.pricePerLitreMinor)}/L)
+                  × {formatCents(OIL[state.oilType]!.pricePerLitreMinor)}/L)
                 </span>
                 <span className="font-medium text-text">
-                  {fmtCents(pricing.oilCostMinor)}
+                  {formatCents(pricing.oilCostMinor)}
                 </span>
               </div>
 
@@ -401,7 +374,7 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
                     {ADDON_LABELS[item.addOn]}
                   </span>
                   <span className="font-medium text-text">
-                    {fmtCents(item.costMinor)}
+                    {formatCents(item.costMinor)}
                   </span>
                 </div>
               ))}
@@ -411,7 +384,7 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
                 <div className="flex items-center justify-between">
                   <span className="text-text-muted">Subtotal</span>
                   <span className="font-medium text-text">
-                    {fmtCents(pricing.subtotalMinor)}
+                    {formatCents(pricing.subtotalMinor)}
                   </span>
                 </div>
               </div>
@@ -421,7 +394,7 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
                 <div className="flex items-center justify-between text-success">
                   <span>Monthly discount (10%)</span>
                   <span className="font-medium">
-                    −{fmtCents(pricing.discountMinor)}
+                    −{formatCents(pricing.discountMinor)}
                   </span>
                 </div>
               )}
@@ -433,7 +406,7 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
                     Estimated total
                   </span>
                   <span className="text-base font-bold text-text">
-                    {fmtCents(pricing.totalMinor)}
+                    {formatCents(pricing.totalMinor)}
                   </span>
                 </div>
               </div>
@@ -443,12 +416,9 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
               Prices are estimates — final pricing confirmed on submission.
             </p>
 
-            <a
-              href="#contact"
-              onClick={(e) => {
-                e.preventDefault();
-                handleContinue();
-              }}
+            <button
+              type="button"
+              onClick={handleContinue}
               className={[
                 buttonVariants({ variant: "secondary", size: "lg" }),
                 "mt-6 w-full",
@@ -456,7 +426,7 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
             >
               Continue
               <ArrowRight className="size-4" aria-hidden="true" />
-            </a>
+            </button>
           </div>
         </div>
       </div>
