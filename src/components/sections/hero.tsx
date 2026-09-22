@@ -4,7 +4,7 @@ import { buttonVariants } from "@/components/ui/button";
 
 export function Hero() {
   return (
-    <section className="px-6 pt-6">
+    <section className="px-6 pt-6 pb-6">
       <div className="relative mx-auto max-w-[var(--shell-max-w)] overflow-hidden rounded-[var(--radius-hero-token)] bg-[radial-gradient(circle_at_15%_20%,rgba(216,255,52,0.16),transparent_40%),radial-gradient(circle_at_85%_75%,rgba(52,79,61,0.9),transparent_55%),radial-gradient(circle_at_75%_15%,rgba(36,58,45,0.85),transparent_50%),linear-gradient(135deg,#17241C_0%,#1E2F24_45%,#243A2D_100%)] px-12 py-16">
         <div className="relative z-[2] grid items-center gap-12 concept:grid-cols-2">
           {/* Text */}
