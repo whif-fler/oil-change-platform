@@ -11,14 +11,23 @@ export function QuoteBuilderSection({ onContinue }: QuoteBuilderSectionProps) {
       id="quote-builder"
       className="bg-surface py-[var(--section-py-mobile)] lg:py-[var(--section-py-desktop)]"
     >
-      <div className="mx-auto max-w-[var(--shell-max-w)] px-[var(--shell-px-mobile)] lg:px-[var(--shell-px-desktop)]">
-        <div className="mb-10 text-center lg:mb-14">
-          <h2 className="mb-4 text-h2 font-semibold leading-[var(--lh-h2)] tracking-[var(--ls-h2)] text-text">
+      <div className="mx-auto max-w-[var(--shell-max-w)] px-[var(--shell-px-mobile)]">
+        <div className="mx-auto mb-10 max-w-[560px] text-center concept:mb-14">
+          <div className="mb-2.5 text-caption font-extrabold uppercase tracking-[0.1em] text-eyebrow">
+            Build your quote
+          </div>
+          <h2
+            className="mb-2.5 font-semibold text-text"
+            style={{
+              fontSize: "clamp(1.7rem, 3vw, 2.3rem)",
+              letterSpacing: "-0.02em",
+            }}
+          >
             Configure your service
           </h2>
-          <p className="mx-auto max-w-2xl text-body text-text-muted">
-            Select your equipment, oil type, and any add‑ons to see
-            an&nbsp;estimated&nbsp;price.
+          <p className="text-[1rem] leading-[1.6] text-text-muted">
+            Pick your equipment, oil, and any add-ons. Your estimate updates as
+            you go&nbsp;— the price is confirmed once you submit your details.
           </p>
         </div>
         <QuoteBuilder onContinue={onContinue} />

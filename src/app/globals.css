@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "maplibre-gl/dist/maplibre-gl.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -19,6 +20,7 @@
  *    surface-raised #FFFFFF   Cards, panels, modals
  *    surface-muted  #F5F7F1   Soft fill, disabled states
  *    surface-dark   #17241C   Hero, service section backgrounds
+ *    surface-header rgba(23,36,28,0.9) Translucent sticky-header scrim
  *    text           #090A0A   Primary body text
  *    text-muted     #666B64   Secondary / caption text
  *    text-on-dark   #F4F3EF   Body text on dark surfaces
@@ -29,10 +31,10 @@
  *
  * 2. TYPOGRAPHY (clamp: min 375px → max 1440px)
  *    font-family    Manrope, sans-serif (weights 400/600/700/800)
- *    h1             clamp(2.5rem, 1.55rem + 3.09vw, 4.5rem)  40→72px  lh 1.05  ls -0.04em  w 600
- *    h2             clamp(2rem, 1.41rem + 2.27vw, 3.5rem)     32→56px  lh 1.1   ls -0.03em  w 600
- *    h3             clamp(1.5rem, 1.23rem + 1.09vw, 2rem)     24→32px  lh 1.2   ls normal   w 600
- *    h4             clamp(1.25rem, 1.14rem + 0.45vw, 1.5rem)  20→24px  lh 1.3   ls normal   w 600
+ *    h1             clamp(2.6rem, 1rem + 2.4vw, 4rem)     41.6→64px  lh 1.05  ls -0.03em  w 600
+ *    h2             clamp(1.8rem, 1rem + 1.6vw, 2.6rem)    28.8→41.6px lh 1.1   ls -0.02em  w 600
+ *    h3             clamp(1.5rem, 1.23rem + 1.09vw, 2rem)  24→32px    lh 1.2   ls normal   w 600
+ *    h4             clamp(1.25rem, 1.14rem + 0.45vw, 1.5rem) 20→24px  lh 1.3   ls normal   w 600
  *    body           1rem          16px   lh 1.6   w 400
  *    body-small     0.875rem     14px   lh 1.6   w 400
  *    caption        min 0.75rem  12px   lh 1.4   w 700
@@ -43,14 +45,17 @@
  *    2: 0.5rem  (8px)   6: 1.5rem  (24px)  10: 2.5rem  (40px)   14: 3.5rem  (56px)
  *    3: 0.75rem (12px)  7: 1.75rem (28px)  11: 2.75rem (44px)   16: 4rem    (64px)
  *    4: 1rem    (16px)  8: 2rem    (32px)  12: 3rem    (48px)   20: 5rem    (80px)
- *                                                      shell-px: 1.5rem mobile / 4rem desktop
- *                                                      section-py: 4rem mobile / 7rem desktop
- *                                                      shell-max-w: 87.5rem (1400px)
+ *                                                      shell-px: 1.5rem (24px all viewports)
+ *                                                      section-py: 3.5rem mobile / 5.5rem desktop
+ *                                                      shell-max-w: 80rem (1280px)
  *
  * 4. RADII
- *    button  0.5rem  (8px)
- *    input   0.5rem  (8px)
- *    card    1rem    (16px)
+ *    button  0.5rem    (8px)
+ *    input   0.5rem    (8px)
+ *    card    1.125rem  (18px)  radius-card-token
+ *    panel   0.875rem  (14px)  radius-panel-token (float cards, FAQ items)
+ *    section 1.375rem  (22px)  radius-section-token
+ *    hero    1.5rem    (24px)  radius-hero-token
  *
  * 5. SHADOWS
  *    sticky-header  0 1px 0 rgba(9,10,10,0.12)
@@ -86,6 +91,7 @@
   --color-surface-raised: var(--surface-raised);
   --color-surface-muted: var(--surface-muted);
   --color-surface-dark: var(--surface-dark);
+  --color-surface-header: var(--surface-header);
 
   /* --- Text (Drew-specific) --- */
   --color-text: var(--text);
@@ -97,6 +103,14 @@
 
   /* --- Success --- */
   --color-success: var(--success);
+
+  /* --- Brand surfaces --- */
+  --color-eyebrow: var(--eyebrow);
+  --color-gradient-soft-start: var(--gradient-soft-start);
+  --color-gradient-soft-mid: var(--gradient-soft-mid);
+  --color-gradient-soft-end: var(--gradient-soft-end);
+  --color-gradient-primary-start: var(--gradient-primary-start);
+  --color-gradient-primary-end: var(--gradient-primary-end);
 
   /* --- Shadows --- */
   --shadow-sticky-header: 0 1px 0 rgba(9, 10, 10, 0.12);
@@ -113,10 +127,17 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-card: var(--radius-card-token);
+  --radius-panel: var(--radius-panel-token);
+  --radius-section: var(--radius-section-token);
+  --radius-hero: var(--radius-hero-token);
 
   /* --- Font --- */
   --font-sans: var(--font-manrope);
   --font-heading: var(--font-manrope);
+
+  /* --- Custom breakpoints --- */
+  --breakpoint-concept: 820px;
 
   /* --- Typography scale --- */
   --text-h1: var(--text-h1);
@@ -163,6 +184,7 @@
   --surface-raised: #ffffff;
   --surface-muted: #f5f7f1;
   --surface-dark: #17241c;
+  --surface-header: rgba(23, 36, 28, 0.9);
 
   /* --- Card / Popover --- */
   --card: #ffffff;
@@ -190,13 +212,25 @@
   /* --- Destructive & Success --- */
   --destructive: #8b3a32;
   --success: #2e7d32;
+  --eyebrow: #4e6800;
+
+  /* --- Brand gradients --- */
+  --gradient-soft-start: #f4f3ef;
+  --gradient-soft-mid: #eef1e9;
+  --gradient-soft-end: #e3eadf;
+  --gradient-primary-start: #d8ff34;
+  --gradient-primary-end: #c7f02d;
 
   /* --- Radius base --- */
   --radius: 0.5rem;
+  --radius-card-token: 1.125rem;
+  --radius-panel-token: 0.875rem;
+  --radius-section-token: 1.375rem;
+  --radius-hero-token: 1.5rem;
 
-  /* --- Typography (fluid clamp) --- */
-  --text-h1: clamp(2.5rem, 1.55rem + 3.09vw, 4.5rem);
-  --text-h2: clamp(2rem, 1.41rem + 2.27vw, 3.5rem);
+  /* --- Typography (fluid clamp — canonical type scale) --- */
+  --text-h1: clamp(2.6rem, 4vw, 4rem);
+  --text-h2: clamp(1.8rem, 3vw, 2.6rem);
   --text-h3: clamp(1.5rem, 1.23rem + 1.09vw, 2rem);
   --text-h4: clamp(1.25rem, 1.14rem + 0.45vw, 1.5rem);
   --text-body: 1rem;
@@ -209,8 +243,8 @@
   --lh-h4: 1.3;
   --lh-body: 1.6;
   --lh-button: 1.4;
-  --ls-h1: -0.04em;
-  --ls-h2: -0.03em;
+  --ls-h1: -0.03em;
+  --ls-h2: -0.02em;
 
   /* --- Spacing (4px base) --- */
   --spacing: 0.25rem;
@@ -226,10 +260,10 @@
   --space-16: 4rem;
   --space-20: 5rem;
   --shell-px-mobile: 1.5rem;
-  --shell-px-desktop: 4rem;
-  --section-py-mobile: 4rem;
-  --section-py-desktop: 7rem;
-  --shell-max-w: 87.5rem;
+  --shell-px-desktop: 1.5rem;
+  --section-py-mobile: 3.5rem;
+  --section-py-desktop: 5.5rem;
+  --shell-max-w: 80rem;
 }
 
 @layer base {
@@ -247,8 +281,20 @@
   }
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Hide the native viewport scrollbar while keeping scrolling functional.
+     Scoped to html (root scroller) only, so inner scroll containers
+     (e.g. dashboard tables) keep their own scrollbars. */
+  html {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  html::-webkit-scrollbar {
+    display: none;
   }
 }
 

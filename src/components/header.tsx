@@ -8,8 +8,9 @@ import { buttonVariants } from "@/components/ui/button";
 const NAV_LINKS = [
   { label: "Services", href: "/#services" },
   { label: "How It Works", href: "/#how-it-works" },
+  { label: "Service Area", href: "/#service-area" },
   { label: "About", href: "/about" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Contact", href: "/contact" },
 ] as const;
 
 function getFocusableElements(container: HTMLElement): HTMLElement[] {
@@ -118,24 +119,24 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-surface-dark shadow-sticky-header">
-      <div className="mx-auto flex max-w-[var(--shell-max-w)] items-center justify-between px-[var(--shell-px-mobile)] py-4 md:px-[var(--shell-px-desktop)]">
+    <header className="sticky top-0 z-50 bg-surface-header shadow-sticky-header backdrop-blur-[10px]">
+      <div className="mx-auto flex max-w-[var(--shell-max-w)] items-center justify-between px-[var(--shell-px-mobile)] py-[18px]">
         {/* Logo / Brand */}
         <Link
           href="/"
-          className="text-xl font-extrabold tracking-tight text-text-on-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-dark"
+          className="text-[1.2rem] font-extrabold text-text-on-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-dark"
         >
           FreshOil
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden items-center gap-8 md:flex" aria-label="Main">
+        <nav className="hidden items-center gap-7 concept:flex" aria-label="Main">
           {NAV_LINKS.map((link) =>
             link.href.startsWith("/") ? (
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-bold leading-tight text-text-on-dark opacity-80 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-dark"
+                className="text-[0.85rem] font-bold leading-tight text-text-on-dark opacity-75 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-dark"
               >
                 {link.label}
               </Link>
@@ -143,7 +144,7 @@ export function Header() {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm font-bold leading-tight text-text-on-dark opacity-80 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-dark"
+                className="text-[0.85rem] font-bold leading-tight text-text-on-dark opacity-75 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-surface-dark"
               >
                 {link.label}
               </a>
@@ -151,17 +152,32 @@ export function Header() {
           )}
           <a
             href="/quote"
-            className={buttonVariants({ variant: "default", size: "sm" })}
+            className={buttonVariants({
+              variant: "default",
+              size: "sm",
+              className: "h-auto px-[18px] py-2.5 text-[0.85rem]",
+            })}
           >
             Get a Quote
           </a>
         </nav>
 
+        <a
+          href="/quote"
+          className={buttonVariants({
+            variant: "default",
+            size: "sm",
+            className: "h-auto px-[18px] py-2.5 text-[0.85rem] concept:hidden",
+          })}
+        >
+          Get a Quote
+        </a>
+
         {/* Mobile menu toggle */}
         <button
           ref={triggerRef}
           type="button"
-          className="inline-flex items-center justify-center rounded-md p-2 text-text-on-dark transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus md:hidden"
+          className="inline-flex items-center justify-center rounded-md p-2 text-text-on-dark transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus concept:hidden"
           onClick={() => {
             if (menuOpen) {
               closeMenu();
@@ -183,7 +199,7 @@ export function Header() {
         <nav
           ref={menuRef}
           id="mobile-menu"
-          className="border-t border-white/10 px-[var(--shell-px-mobile)] pb-6 pt-4 md:hidden"
+          className="border-t border-white/10 px-[var(--shell-px-mobile)] pb-6 pt-4 concept:hidden"
           aria-label="Mobile"
         >
           <ul className="flex flex-col gap-4">
@@ -209,19 +225,6 @@ export function Header() {
               </li>
             ))}
           </ul>
-          <div className="mt-6">
-            <a
-              href="/quote"
-              onClick={handleLinkClick}
-              className={buttonVariants({
-                variant: "default",
-                size: "lg",
-                className: "w-full",
-              })}
-            >
-              Get a Quote
-            </a>
-          </div>
         </nav>
       )}
     </header>

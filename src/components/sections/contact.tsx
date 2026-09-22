@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
 
@@ -83,14 +82,21 @@ export function Contact() {
     return (
       <section
         id="contact"
-        className="bg-surface py-[var(--section-py-mobile)] lg:py-[var(--section-py-desktop)]"
+        className="bg-surface pb-12 pt-0 concept:pb-16"
       >
-        <div className="mx-auto max-w-[var(--shell-max-w)] px-[var(--shell-px-mobile)] lg:px-[var(--shell-px-desktop)]">
+        <div className="mx-auto max-w-[var(--shell-max-w)] px-[var(--shell-px-mobile)]">
           <div className="mx-auto max-w-lg text-center">
             <div className="mb-6 inline-flex size-16 items-center justify-center rounded-full bg-success/10">
               <CheckCircle className="size-8 text-success" aria-hidden="true" />
             </div>
-            <h2 className="mb-4 text-h3 font-semibold text-text">
+            <h2
+              className="mb-4 font-semibold text-text"
+              style={{
+                fontSize: "clamp(1.5rem, 1rem + 1.5vw, 2rem)",
+                lineHeight: 1.2,
+                letterSpacing: "-0.03em",
+              }}
+            >
               Message sent
             </h2>
             <p className="mb-8 text-body text-text-muted">
@@ -112,25 +118,20 @@ export function Contact() {
   // ── Contact form ────────────────────────────────────────
 
   return (
-    <section
+    <>
+      <section
       id="contact"
       className="bg-surface py-[var(--section-py-mobile)] lg:py-[var(--section-py-desktop)]"
-    >
-      <div className="mx-auto max-w-[var(--shell-max-w)] px-[var(--shell-px-mobile)] lg:px-[var(--shell-px-desktop)]">
-        <div className="mb-10 text-center lg:mb-14">
-          <h2 className="mb-4 text-h2 font-semibold leading-[var(--lh-h2)] tracking-[var(--ls-h2)] text-text">
-            Get in&nbsp;touch
-          </h2>
-          <p className="mx-auto max-w-xl text-body text-text-muted">
-            Have a question about our service? Send us a message and we&apos;ll
-            get back to&nbsp;you.
-          </p>
-        </div>
-
-        <div className="mx-auto grid max-w-4xl gap-10 lg:grid-cols-[1fr_280px] lg:gap-12">
+      >
+        <div className="mx-auto max-w-[var(--shell-max-w)] px-[var(--shell-px-mobile)]">
+          <div className="grid items-start gap-12 concept:grid-cols-2">
           {/* Form */}
-          <form onSubmit={handleSubmit} noValidate className="space-y-5">
-            <div className="grid gap-5 sm:grid-cols-2">
+            <form
+              onSubmit={handleSubmit}
+              noValidate
+              className="order-2 space-y-4 rounded-[var(--radius-card-token)] bg-surface-raised p-8 ring-1 ring-border shadow-card concept:order-2"
+            >
+            <div className="grid gap-4">
               <div>
                 <Label htmlFor="contact-name">Name</Label>
                 <Input
@@ -231,7 +232,7 @@ export function Contact() {
 
             <Button
               type="submit"
-              variant="default"
+              variant="secondary"
               size="lg"
               className="w-full"
               disabled={isPending}
@@ -248,34 +249,92 @@ export function Contact() {
           </form>
 
           {/* Info sidebar */}
-          <aside className="flex flex-col gap-6 text-sm text-text-muted lg:pt-1">
+          <aside className="order-1 flex flex-col gap-0 text-sm text-text-muted concept:order-1">
             <div>
-              <h3 className="mb-1 font-semibold text-text">FreshOil</h3>
-              <p className="leading-relaxed">
-                Onsite cooking-oil service for restaurants and&nbsp;cafés.
+              <div className="mb-2.5 text-caption font-extrabold uppercase tracking-[0.1em] text-eyebrow">
+                Contact details
+              </div>
+              <h2 className="mb-3.5 text-[clamp(1.6rem,3vw,2.1rem)] font-semibold tracking-[-0.02em] text-text">
+                Talk to the team
+              </h2>
+              <p className="mb-6 leading-[1.6]">
+                Prefer email or a call? Reach us directly and we&apos;ll get
+                back to you the same way.
               </p>
             </div>
 
-            <Separator />
-
-            <div>
-              <p className="mb-1 font-semibold text-text">Email</p>
-              <p>hello@freshoil.com</p>
+            <div className="mb-3 flex items-center gap-2.5 text-[0.92rem] font-semibold text-text">
+              <span className="size-2 rounded-full bg-primary" />
+              <a href="mailto:hello@freshoil.com">hello@freshoil.com</a>
+            </div>
+            <div className="mb-3 flex items-center gap-2.5 text-[0.92rem] font-semibold text-text">
+              <span className="size-2 rounded-full bg-primary" />
+              <a href="tel:5551234567">(555) 123-4567</a>
             </div>
 
-            <div>
-              <p className="mb-1 font-semibold text-text">Phone</p>
-              <p>(555) 123-4567</p>
+            <div className="mt-4 border-t border-border pt-6">
+              <h3 className="mb-2.5 text-[0.85rem] font-bold text-text">
+                Response hours
+              </h3>
+              <div className="flex justify-between py-1 text-[0.85rem]">
+                <span>Monday – Friday</span>
+                <span>8am – 6pm</span>
+              </div>
+              <div className="flex justify-between py-1 text-[0.85rem]">
+                <span>Saturday</span>
+                <span>9am – 2pm</span>
+              </div>
+              <div className="flex justify-between py-1 text-[0.85rem]">
+                <span>Sunday</span>
+                <span>Closed</span>
+              </div>
             </div>
-
-            <Separator />
-
-            <p className="leading-relaxed text-text-muted/80">
-              We aim to respond within one business&nbsp;day.
-            </p>
           </aside>
         </div>
-      </div>
-    </section>
+        </div>
+      </section>
+
+      <section className="bg-[linear-gradient(135deg,var(--gradient-soft-start)_0%,var(--gradient-soft-mid)_50%,var(--gradient-soft-end)_100%)] py-12 concept:py-16">
+        <div className="mx-auto max-w-[var(--shell-max-w)] px-[var(--shell-px-mobile)]">
+          <div className="mx-auto mb-10 max-w-[560px] text-center">
+            <div className="mb-2.5 text-caption font-extrabold uppercase tracking-[0.1em] text-eyebrow">
+              Before you write in
+            </div>
+            <h2 className="text-[clamp(1.7rem,3vw,2.3rem)] font-semibold tracking-[-0.02em] text-text">
+              Common questions
+            </h2>
+          </div>
+          <div className="mx-auto flex max-w-[760px] flex-col gap-3">
+            <div className="rounded-[var(--radius-panel-token)] border border-border bg-surface-raised px-[22px] py-[18px]">
+              <h3 className="mb-1.5 text-[0.94rem] font-bold text-text">
+                Do I need a fixed contract?
+              </h3>
+              <p className="text-[0.85rem] leading-[1.5] text-text-muted">
+                No — one-time visits are available any time. Monthly plans are
+                optional and save 10%.
+              </p>
+            </div>
+            <div className="rounded-[var(--radius-panel-token)] border border-border bg-surface-raised px-[22px] py-[18px]">
+              <h3 className="mb-1.5 text-[0.94rem] font-bold text-text">
+                Is pricing confirmed before booking?
+              </h3>
+              <p className="text-[0.85rem] leading-[1.5] text-text-muted">
+                Yes, your estimate from the quote builder is confirmed before
+                we schedule a visit.
+              </p>
+            </div>
+            <div className="rounded-[var(--radius-panel-token)] border border-border bg-surface-raised px-[22px] py-[18px]">
+              <h3 className="mb-1.5 text-[0.94rem] font-bold text-text">
+                What areas do you service?
+              </h3>
+              <p className="text-[0.85rem] leading-[1.5] text-text-muted">
+                Let us know your venue location in the form and we&apos;ll
+                confirm coverage in our reply.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

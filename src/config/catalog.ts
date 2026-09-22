@@ -16,48 +16,82 @@ export const CURRENCY = "USD" as const;
 // ─── Equipment ─────────────────────────────────────────────
 
 export interface EquipmentConfig {
-  /** Service fee in minor units */
-  serviceFeeMinor: number;
-  /** Capacity in litres — used to compute oil cost */
-  capacityLitres: number;
+  /**
+   * Service fee in minor units, or null for custom-quote equipment
+   * (Built-In/Fixed, Other/Custom) where we do not invent a fee.
+   */
+  serviceFeeMinor: number | null;
 }
 
 export const EQUIPMENT: Record<string, EquipmentConfig> = {
   COUNTERTOP_FRYER: {
     serviceFeeMinor: 1500, // $15.00
-    capacityLitres: 8,
   },
   FLOOR_FRYER: {
     serviceFeeMinor: 2500, // $25.00
-    capacityLitres: 15,
   },
   FRYER_BANK: {
     serviceFeeMinor: 4000, // $40.00
-    capacityLitres: 30,
+  },
+  BUILT_IN: {
+    serviceFeeMinor: null, // custom quote
+  },
+  OTHER: {
+    serviceFeeMinor: null, // custom quote
   },
 } as const;
 
 export type EquipmentType = keyof typeof EQUIPMENT;
 
+// ─── Capacity (gallons) ────────────────────────────────────
+// Equipment type is separate from capacity. The customer picks a
+// gallons range; the estimate uses a representative fill for that
+// range so the quote is deterministic on both client and server.
+
+export interface CapacityConfig {
+  /** Representative gallons used to estimate the oil cost. */
+  estimateGallons: number;
+}
+
+export const CAPACITY_TIERS: Record<string, CapacityConfig> = {
+  UP_TO_5: {
+    estimateGallons: 4, // ≈ 4 gal fill
+  },
+  RANGE_5_10: {
+    estimateGallons: 8, // ≈ 8 gal fill
+  },
+  RANGE_10_15: {
+    estimateGallons: 12, // ≈ 12 gal fill
+  },
+  RANGE_15_20: {
+    estimateGallons: 18, // ≈ 18 gal fill
+  },
+  OVER_20: {
+    estimateGallons: 24, // ≈ 24 gal fill
+  },
+} as const;
+
+export type Capacity = keyof typeof CAPACITY_TIERS;
+
 // ─── Oil ───────────────────────────────────────────────────
 
 export interface OilConfig {
-  /** Price per litre in minor units */
-  pricePerLitreMinor: number;
+  /** Price per gallon in minor units */
+  pricePerGallonMinor: number;
 }
 
 export const OIL: Record<string, OilConfig> = {
   CANOLA: {
-    pricePerLitreMinor: 800, // $8.00 / L
+    pricePerGallonMinor: 2600, // $26.00 / gal
   },
   SUNFLOWER: {
-    pricePerLitreMinor: 700, // $7.00 / L
+    pricePerGallonMinor: 2400, // $24.00 / gal
   },
   PALM: {
-    pricePerLitreMinor: 600, // $6.00 / L
+    pricePerGallonMinor: 2200, // $22.00 / gal
   },
   BLEND: {
-    pricePerLitreMinor: 650, // $6.50 / L
+    pricePerGallonMinor: 2300, // $23.00 / gal
   },
 } as const;
 

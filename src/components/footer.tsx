@@ -9,17 +9,18 @@ const SERVICE_LINKS = [
 
 const COMPANY_LINKS = [
   { label: "About", href: "/about" },
+  { label: "Service Area", href: "/#service-area" },
   { label: "How It Works", href: "/#how-it-works" },
   { label: "Get a Quote", href: "/quote" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Contact", href: "/contact" },
 ] as const;
 
 export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-surface-dark py-12 lg:py-16">
-      <div className="mx-auto max-w-[var(--shell-max-w)] px-[var(--shell-px-mobile)] lg:px-[var(--shell-px-desktop)]">
+    <footer className="bg-surface-dark py-10">
+      <div className="mx-auto max-w-[var(--shell-max-w)] px-[var(--shell-px-mobile)]">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">

@@ -12,6 +12,16 @@ enum EquipmentType {
   COUNTERTOP_FRYER
   FLOOR_FRYER
   FRYER_BANK
+  BUILT_IN
+  OTHER
+}
+
+enum Capacity {
+  UP_TO_5
+  RANGE_5_10
+  RANGE_10_15
+  RANGE_15_20
+  OVER_20
 }
 
 enum OilType {
@@ -49,6 +59,7 @@ model Quotation {
   id            String        @id @default(cuid())
   createdAt     DateTime      @default(now())
   equipmentType EquipmentType
+  capacity      Capacity?
   oilType       OilType
   addOns        AddOn[]
   frequency     Frequency

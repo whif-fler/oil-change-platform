@@ -1,155 +1,121 @@
 import Image from "next/image";
-import { Droplets, Sparkles, Filter, Recycle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+
+const oils = ["Canola", "Sunflower", "Palm", "Blend"];
 
 export function Services() {
   return (
     <section
       id="services"
-      className="bg-surface py-[var(--section-py-mobile)] lg:py-[var(--section-py-desktop)]"
+      className="bg-[linear-gradient(135deg,var(--gradient-soft-start)_0%,var(--gradient-soft-mid)_50%,var(--gradient-soft-end)_100%)] py-[var(--section-py-mobile)] lg:py-[var(--section-py-desktop)]"
     >
-      <div className="mx-auto max-w-[var(--shell-max-w)] px-[var(--shell-px-mobile)] lg:px-[var(--shell-px-desktop)]">
-        <div className="mb-12 text-center lg:mb-16">
-          <h2 className="mb-4 text-h2 font-semibold leading-[var(--lh-h2)] tracking-[var(--ls-h2)] text-text">
-            What we&nbsp;do
+      <div className="mx-auto max-w-[var(--shell-max-w)] px-[var(--shell-px-mobile)]">
+        <div className="mx-auto mb-14 max-w-[560px] text-center">
+          <div className="mb-2.5 text-caption font-extrabold uppercase tracking-[0.1em] text-eyebrow">
+            What we do
+          </div>
+          <h2 className="mb-3 text-[clamp(1.8rem,1rem+2vw,2.6rem)] font-semibold tracking-[-0.02em] text-text">
+            Everything your kitchen needs
           </h2>
-          <p className="mx-auto max-w-2xl text-body text-text-muted">
-            Everything your commercial kitchen needs to keep frying safely
-            and&nbsp;efficiently.
+          <p className="text-[1.05rem] leading-[1.6] text-text-muted">
+            Full-service fryer oil maintenance, handled onsite, on your
+            schedule.
           </p>
         </div>
 
-        {/* Bento grid — 2-col on tablet, 4-col on desktop */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:auto-rows-fr lg:grid-cols-4 lg:gap-8">
-          {/* Oil Change — hero card */}
-          <article className="group flex flex-col rounded-2xl bg-surface-raised p-6 ring-1 ring-border shadow-card transition-all duration-300 hover:shadow-card-hover md:p-8">
-            <div className="mb-4 inline-flex size-12 items-center justify-center rounded-xl bg-surface-muted">
-              <Droplets className="size-6 text-accent" aria-hidden="true" />
+        <div className="grid grid-cols-1 gap-5 concept:grid-cols-[1.4fr_1fr]">
+          <article className="group flex flex-col overflow-hidden rounded-[var(--radius-card-token)] bg-surface-raised ring-1 ring-border shadow-card transition-shadow duration-300 hover:shadow-card-hover concept:row-span-2">
+            <div className="relative aspect-[16/10] overflow-hidden concept:aspect-[16/13]">
+              <Image
+                src="/images/service-oil-change.jpg"
+                alt="Deep frying basket being lowered into hot cooking oil"
+                fill
+                loading="lazy"
+                sizes="(max-width: 819px) 100vw, 55vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              />
             </div>
-            <h3 className="mb-2 text-h3 font-semibold text-text">
-              Oil Change
-            </h3>
-            <p className="mb-6 text-sm leading-relaxed text-text-muted lg:text-base">
-              Complete cooking-oil replacement for your fryers. We drain,
-              refill, and ensure your oil is fresh and ready for service.
-            </p>
-            <div className="mb-6 flex flex-wrap gap-1.5">
-              {["Canola", "Sunflower", "Palm", "Blend"].map((oil) => (
-                <Badge key={oil} variant="secondary">
-                  {oil}
-                </Badge>
-              ))}
-            </div>
-            <div className="relative mt-auto hidden overflow-hidden rounded-xl md:block">
-              <div className="aspect-[3/2] transition-transform duration-500 group-hover:scale-[1.02]">
-                <Image
-                  src="/images/service-oil-change.jpg"
-                  alt="Deep frying basket being lowered into hot cooking oil"
-                  fill
-                  loading="lazy"
-                  sizes="(max-width: 1023px) 50vw, 25vw"
-                  className="object-cover"
-                />
+            <div className="p-6">
+              <h3 className="mb-1.5 text-[1.5rem] font-bold text-text">
+                Oil Change
+              </h3>
+              <p className="mb-3 text-[0.9rem] leading-[1.5] text-text-muted">
+                Complete cooking-oil replacement for your fryers. We drain,
+                refill, and ensure your oil is fresh and ready for service.
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {oils.map((oil) => (
+                  <Badge key={oil} variant="secondary">
+                    {oil}
+                  </Badge>
+                ))}
               </div>
             </div>
           </article>
 
-          {/* Deep Cleaning — with image on desktop */}
-          <article className="group flex flex-col rounded-2xl bg-surface-raised p-6 ring-1 ring-border shadow-card transition-all duration-300 hover:shadow-card-hover lg:p-8">
-            <div className="mb-4 inline-flex size-12 items-center justify-center rounded-xl bg-surface-muted">
-              <Sparkles className="size-6 text-accent" aria-hidden="true" />
-            </div>
-            <h3 className="mb-2 text-h4 font-semibold text-text">
-              Deep Cleaning
-            </h3>
-            <p className="mb-4 text-sm leading-relaxed text-text-muted">
-              Thorough cleaning of fryer tanks and equipment. Removes
-              built-up grease and residue for a hygienic kitchen.
-            </p>
-            <div className="mb-4 flex flex-wrap gap-1.5">
-              {["Countertop", "Floor", "Fryer Bank"].map((eq) => (
-                <Badge key={eq} variant="secondary">
-                  {eq}
-                </Badge>
-              ))}
-            </div>
-            <div className="relative mt-auto hidden overflow-hidden rounded-xl lg:block">
-              <div className="aspect-[3/2] transition-transform duration-500 group-hover:scale-[1.02]">
+          <div className="grid grid-cols-1 gap-5 concept:grid-cols-2">
+            <article className="group flex flex-col overflow-hidden rounded-[var(--radius-card-token)] bg-surface-raised ring-1 ring-border shadow-card transition-shadow duration-300 hover:shadow-card-hover">
+              <div className="relative aspect-[16/10] overflow-hidden">
                 <Image
                   src="/images/service-deep-cleaning.jpg"
                   alt="Stainless steel commercial kitchen surface being cleaned"
                   fill
                   loading="lazy"
-                  sizes="25vw"
-                  className="object-cover"
+                  sizes="(max-width: 819px) 100vw, 22vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                 />
               </div>
-            </div>
-          </article>
+              <div className="p-5">
+                <h3 className="mb-1 text-[1.2rem] font-bold text-text">
+                  Deep Cleaning
+                </h3>
+                <p className="text-[0.9rem] leading-[1.5] text-text-muted">
+                  Thorough cleaning of fryer tanks and equipment.
+                </p>
+              </div>
+            </article>
 
-          {/* Filter Replacement — with image on desktop */}
-          <article className="group flex flex-col rounded-2xl bg-surface-raised p-6 ring-1 ring-border shadow-card transition-all duration-300 hover:shadow-card-hover lg:p-8">
-            <div className="mb-4 inline-flex size-12 items-center justify-center rounded-xl bg-surface-muted">
-              <Filter className="size-6 text-accent" aria-hidden="true" />
-            </div>
-            <h3 className="mb-2 text-h4 font-semibold text-text">
-              Filter Replacement
-            </h3>
-            <p className="mb-4 text-sm leading-relaxed text-text-muted">
-              Regular filter swaps to keep your frying system running
-              efficiently and your oil cleaner for longer.
-            </p>
-            <div className="mb-4 flex flex-wrap gap-1.5">
-              {["Countertop", "Floor", "Fryer Bank"].map((eq) => (
-                <Badge key={eq} variant="secondary">
-                  {eq}
-                </Badge>
-              ))}
-            </div>
-            <div className="relative mt-auto hidden overflow-hidden rounded-xl lg:block">
-              <div className="aspect-[3/2] transition-transform duration-500 group-hover:scale-[1.02]">
+            <article className="group flex flex-col overflow-hidden rounded-[var(--radius-card-token)] bg-surface-raised ring-1 ring-border shadow-card transition-shadow duration-300 hover:shadow-card-hover">
+              <div className="relative aspect-[16/10] overflow-hidden">
                 <Image
                   src="/images/service-filter.jpg"
                   alt="Stainless steel fryer basket ready for filter replacement"
                   fill
                   loading="lazy"
-                  sizes="25vw"
-                  className="object-cover"
+                  sizes="(max-width: 819px) 100vw, 22vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
                 />
               </div>
-            </div>
-          </article>
+              <div className="p-5">
+                <h3 className="mb-1 text-[1.2rem] font-bold text-text">
+                  Filter Replacement
+                </h3>
+                <p className="text-[0.9rem] leading-[1.5] text-text-muted">
+                  Regular filter swaps for cleaner oil, longer.
+                </p>
+              </div>
+            </article>
+          </div>
 
-          {/* Waste-Oil Disposal — with image on desktop */}
-          <article className="group flex flex-col rounded-2xl bg-surface-raised p-6 ring-1 ring-border shadow-card transition-all duration-300 hover:shadow-card-hover lg:p-8">
-            <div className="mb-4 inline-flex size-12 items-center justify-center rounded-xl bg-surface-muted">
-              <Recycle className="size-6 text-accent" aria-hidden="true" />
+          <article className="group flex flex-col overflow-hidden rounded-[var(--radius-card-token)] bg-surface-raised ring-1 ring-border shadow-card transition-shadow duration-300 hover:shadow-card-hover">
+            <div className="relative aspect-[16/10] overflow-hidden">
+              <Image
+                src="/images/service-waste-oil.jpg"
+                alt="Commercial deep fryer basket in a professional kitchen"
+                fill
+                loading="lazy"
+                sizes="(max-width: 819px) 100vw, 22vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              />
             </div>
-            <h3 className="mb-2 text-h4 font-semibold text-text">
-              Waste-Oil Disposal
-            </h3>
-            <p className="mb-4 text-sm leading-relaxed text-text-muted">
-              Responsible collection and disposal of used cooking oil.
-              Eco-friendly handling compliant with local regulations.
-            </p>
-            <div className="mb-4 flex flex-wrap gap-1.5">
-              {["Countertop", "Floor", "Fryer Bank"].map((eq) => (
-                <Badge key={eq} variant="secondary">
-                  {eq}
-                </Badge>
-              ))}
-            </div>
-            <div className="relative mt-auto hidden overflow-hidden rounded-xl lg:block">
-              <div className="aspect-[3/2] transition-transform duration-500 group-hover:scale-[1.02]">
-                <Image
-                  src="/images/service-waste-oil.jpg"
-                  alt="Commercial deep fryer basket in a professional kitchen"
-                  fill
-                  loading="lazy"
-                  sizes="25vw"
-                  className="object-cover"
-                />
-              </div>
+            <div className="p-5">
+              <h3 className="mb-1.5 text-[1.2rem] font-bold text-text">
+                Waste-Oil Disposal
+              </h3>
+              <p className="text-[0.9rem] leading-[1.5] text-text-muted">
+                Responsible collection and eco-friendly disposal, compliant
+                with local regulations.
+              </p>
             </div>
           </article>
         </div>

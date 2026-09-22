@@ -6,12 +6,21 @@
  */
 
 import { z } from "zod";
-import { EQUIPMENT, OIL, ADD_ONS, FREQUENCY } from "@/config/catalog";
+import {
+  EQUIPMENT,
+  CAPACITY_TIERS,
+  OIL,
+  ADD_ONS,
+  FREQUENCY,
+} from "@/config/catalog";
 
 // ─── Catalog enum schemas ──────────────────────────────────
 
 const equipmentTypeEnum = z.enum(
   Object.keys(EQUIPMENT) as [string, ...string[]],
+);
+const capacityEnum = z.enum(
+  Object.keys(CAPACITY_TIERS) as [string, ...string[]],
 );
 const oilTypeEnum = z.enum(Object.keys(OIL) as [string, ...string[]]);
 const addOnEnum = z.enum(Object.keys(ADD_ONS) as [string, ...string[]]);
@@ -21,6 +30,7 @@ const frequencyEnum = z.enum(Object.keys(FREQUENCY) as [string, ...string[]]);
 
 const serviceConfigSchema = z.object({
   equipmentType: equipmentTypeEnum,
+  capacity: capacityEnum,
   oilType: oilTypeEnum,
   addOns: z.array(addOnEnum).default([]),
   frequency: frequencyEnum,
@@ -104,7 +114,8 @@ const addOnCostSchema = z.object({
 });
 
 export const quotationBreakdownSchema = z.object({
-  serviceFeeMinor: z.number(),
+  serviceFeeMinor: z.number().nullable(),
+  oilGallons: z.number().optional(),
   oilCostMinor: z.number(),
   addOnCostsMinor: z.array(addOnCostSchema),
   subtotalMinor: z.number(),
@@ -113,6 +124,7 @@ export const quotationBreakdownSchema = z.object({
   currency: z.string(),
   config: z.object({
     equipmentType: equipmentTypeEnum,
+    capacity: capacityEnum.optional(),
     oilType: oilTypeEnum,
     addOns: z.array(addOnEnum),
     frequency: frequencyEnum,

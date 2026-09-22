@@ -1,9 +1,14 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { EnquiryCard } from "@/components/dashboard/enquiry-card";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 import { EnquiryTable } from "@/components/dashboard/enquiry-table";
 import { EmptyState } from "@/components/dashboard/empty-state";
 

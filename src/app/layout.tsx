@@ -10,9 +10,26 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "FreshOil — Onsite Cooking-Oil Service",
+  metadataBase: new URL("https://oil-change-platform-gilt.vercel.app"),
+  title: "FreshOil — On-Site Cooking Oil Service",
   description:
-    "Professional cooking-oil service for restaurants and cafes. Oil changes, deep cleaning, filter replacement, and waste-oil disposal — we come to you.",
+    "On-site cooking-oil and fryer service for restaurants and cafés. Oil changes, deep cleaning, filter replacement, and waste-oil disposal — one-time or monthly.",
+  openGraph: {
+    type: "website",
+    siteName: "FreshOil",
+    url: "/",
+    images: [
+      {
+        url: "/images/hero-commercial-fryer.jpg",
+        width: 1600,
+        height: 1067,
+        alt: "Commercial deep fryer with stainless steel basket in a restaurant kitchen",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export const viewport: Viewport = {
@@ -27,8 +44,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${manrope.variable} antialiased`} suppressHydrationWarning>
+    <html lang="en" className={manrope.variable}>
+      <body className="antialiased" suppressHydrationWarning>
         {children}
       </body>
     </html>

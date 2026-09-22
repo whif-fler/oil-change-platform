@@ -8,6 +8,7 @@
 import {
   CURRENCY,
   EQUIPMENT,
+  CAPACITY_TIERS,
   OIL,
   ADD_ONS,
   FREQUENCY,
@@ -18,24 +19,30 @@ import type { ServiceConfig, PricingBreakdown } from "@/lib/types";
  * Compute the full pricing breakdown for a service configuration.
  *
  * Formula:
- *   oilCost       = capacityLitres × oilPricePerLitre
- *   subtotal      = serviceFee + oilCost + Σ(addOnCosts)
+ *   oilGallons    = estimateGallons for the selected capacity tier
+ *   oilCost       = oilGallons × oilPricePerGallon
+ *   subtotal      = (serviceFee ?? 0) + oilCost + Σ(addOnCosts)
  *   discount      = subtotal × monthlyDiscountRate  (0 for ONE_TIME)
  *   total         = subtotal − discount
+ *
+ * For custom-quote equipment (BUILT_IN, OTHER) the service fee is null
+ * and is excluded from the subtotal — the fee is agreed after review.
  *
  * All values are integer minor units. No floating-point money.
  */
 export function calculatePricing(input: ServiceConfig): PricingBreakdown {
   const equipment = EQUIPMENT[input.equipmentType];
+  const capacity = CAPACITY_TIERS[input.capacity];
   const oil = OIL[input.oilType];
   const frequencyConfig = FREQUENCY[input.frequency];
 
-  if (!equipment || !oil || !frequencyConfig) {
+  if (!equipment || !capacity || !oil || !frequencyConfig) {
     throw new Error("Invalid catalog selection");
   }
 
   // ── Oil cost ─────────────────────────────────────────────
-  const oilCostMinor = equipment.capacityLitres * oil.pricePerLitreMinor;
+  const oilGallons = capacity.estimateGallons;
+  const oilCostMinor = oilGallons * oil.pricePerGallonMinor;
 
   // ── Add-on costs (deduplicate if same add-on passed twice) ──
   const uniqueAddOns = [...new Set(input.addOns)];
@@ -50,8 +57,11 @@ export function calculatePricing(input: ServiceConfig): PricingBreakdown {
   );
 
   // ── Subtotal ─────────────────────────────────────────────
+  // Custom-quote equipment has no service fee, so (null ?? 0).
   const subtotalMinor =
-    equipment.serviceFeeMinor + oilCostMinor + totalAddOnCostMinor;
+    (equipment.serviceFeeMinor ?? 0) +
+    oilCostMinor +
+    totalAddOnCostMinor;
 
   // ── Discount ─────────────────────────────────────────────
   const discountRate = frequencyConfig.monthlyDiscountRate;
@@ -65,6 +75,7 @@ export function calculatePricing(input: ServiceConfig): PricingBreakdown {
 
   return {
     serviceFeeMinor: equipment.serviceFeeMinor,
+    oilGallons,
     oilCostMinor,
     addOnCostsMinor,
     subtotalMinor,
@@ -73,6 +84,7 @@ export function calculatePricing(input: ServiceConfig): PricingBreakdown {
     currency: CURRENCY,
     config: {
       equipmentType: input.equipmentType,
+      capacity: input.capacity,
       oilType: input.oilType,
       addOns: uniqueAddOns,
       frequency: input.frequency,

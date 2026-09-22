@@ -3,6 +3,7 @@ import { formatCurrency } from "@/lib/formatting";
 
 type QuotationSelect = {
   equipmentType: string;
+  capacity: string | null;
   oilType: string;
   addOns: string[];
   frequency: string;
@@ -45,6 +46,14 @@ export function QuotationDetails({
             {humanize(quotation.equipmentType)}
           </p>
         </div>
+        {quotation.capacity && (
+          <div>
+            <span className="text-xs text-text-muted">Capacity</span>
+            <p className="font-medium text-text">
+              {humanize(quotation.capacity)}
+            </p>
+          </div>
+        )}
         <div>
           <span className="text-xs text-text-muted">Oil type</span>
           <p className="font-medium text-text">
@@ -71,12 +80,19 @@ export function QuotationDetails({
       <div className="space-y-2 rounded-lg bg-surface-muted p-4">
         <div className="flex justify-between">
           <span className="text-text-muted">Service fee</span>
-          <span className="font-medium text-text">
-            {formatCurrency(b.serviceFeeMinor, b.currency)}
-          </span>
+          {b.serviceFeeMinor !== null ? (
+            <span className="font-medium text-text">
+              {formatCurrency(b.serviceFeeMinor, b.currency)}
+            </span>
+          ) : (
+            <span className="font-medium text-text">Custom quote</span>
+          )}
         </div>
         <div className="flex justify-between">
-          <span className="text-text-muted">Oil cost</span>
+          <span className="text-text-muted">
+            Oil cost
+            {b.oilGallons ? ` (${b.oilGallons} gal)` : ""}
+          </span>
           <span className="font-medium text-text">
             {formatCurrency(b.oilCostMinor, b.currency)}
           </span>

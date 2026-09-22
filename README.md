@@ -24,7 +24,8 @@ The service is designed around the business owner traveling to the customer's ve
 ## Tech Stack
 
 - **Framework:** Next.js 15.5 (App Router)
-- **UI:** React 19.1, Tailwind CSS 4, shadcn/ui
+- **UI:** React 19.1, Tailwind CSS 4, shadcn/ui components (Base UI primitives), lucide-react icons
+- **Maps:** MapLibre GL (client-side, no API key)
 - **Language:** TypeScript 5 (strict mode)
 - **Validation:** Zod 4.6
 - **ORM:** Prisma 6.19
@@ -42,8 +43,9 @@ The service is designed around the business owner traveling to the customer's ve
 - Interactive quote builder with equipment, oil, add-on, and frequency selection
 - Real-time client-side pricing estimates (estimate only — server is authoritative)
 - One-time and monthly service options with monthly discount
-- General enquiry (question) form via homepage Contact section
+- Dedicated `/contact` page — general enquiry (question) form
 - Service request form with venue details and preferred date
+- Interactive service-area section with a MapLibre map and venue availability checker
 - Persistent quotation snapshots stored in PostgreSQL
 
 ### Owner dashboard
@@ -51,7 +53,8 @@ The service is designed around the business owner traveling to the customer's ve
 - Protected owner authentication (login/logout)
 - Dashboard enquiry list (cards on mobile, table on desktop)
 - Enquiry detail view with full customer, venue, and quotation information
-- Status management (New, Contacted, Scheduled, Completed, Cancelled)
+- Quick customer contact actions on the enquiry detail page (call, email, Google Maps directions)
+- Status management (New, Contacted, Scheduled, Completed, Cancelled) via a Base UI select
 - Quotation breakdown display from persisted snapshots
 
 ### Cross-cutting
@@ -61,6 +64,7 @@ The service is designed around the business owner traveling to the customer's ve
 - Idempotent service request submission (`clientRequestId`)
 - Graceful handling of invalid/malformed data
 - Keyboard accessibility, visible focus states, semantic HTML
+- Basic technical SEO — per-page metadata, Open Graph, canonical URLs, generated `robots.txt` and `sitemap.xml`, and `noindex` on private routes
 
 ## Architecture
 
@@ -80,7 +84,7 @@ The application uses the Next.js 15 App Router with a Server Component / Client 
 
 ### Authentication
 
-- Middleware protects `/dashboard` and `/api/dashboard` routes.
+- Middleware protects `/dashboard` routes.
 - Server-side `getSessionUser()` provides belt-and-suspenders verification in pages and Server Actions.
 - HttpOnly session cookie with `SameSite=Lax`, `Secure` in production.
 - Session cookie is HMAC-signed using a server-side secret.
@@ -110,13 +114,11 @@ The Prisma schema and migration files are included in the repository.
 5. Customer submits the form. Server validates the payload, recalculates the quotation server-side, and persists both the quotation and enquiry in a database transaction.
 6. Customer sees a confirmation with their estimate and next-step explanation.
 
-The homepage also includes an embedded quote builder for quick access from the landing page.
-
 ### Owner workflow
 
 1. Owner navigates to `/dashboard` and is redirected to `/login` if unauthenticated.
 2. Dashboard loads enquiries from PostgreSQL, ordered newest first.
-3. Owner clicks an enquiry to view full details, including persisted quotation breakdown.
+3. Owner clicks an enquiry to view full details, including the persisted quotation breakdown and quick contact actions (call, email, directions).
 4. Owner updates the enquiry status via the protected Server Action.
 5. Status is persisted and the page refreshes.
 
@@ -259,6 +261,7 @@ src/
 ├── app/
 │   ├── (public)/             # Public route group (Header + Footer)
 │   │   ├── about/            # About page
+│   │   ├── contact/          # Dedicated contact / enquiry page
 │   │   ├── quote/            # Dedicated quote configuration page
 │   │   ├── request/          # Dedicated service request page
 │   │   └── page.tsx          # Homepage
@@ -267,7 +270,9 @@ src/
 │   │   └── enquiries/        # Public enquiry submission endpoint
 │   ├── dashboard/            # Protected dashboard (list, detail, error)
 │   ├── login/                # Owner login page
-│   └── layout.tsx            # Root layout (Manrope font, design tokens)
+│   ├── robots.ts             # Generated robots.txt
+│   ├── sitemap.ts            # Generated sitemap.xml
+│   └── layout.tsx            # Root layout (Manrope font, design tokens, metadata)
 ├── components/
 │   ├── dashboard/            # Dashboard-specific components
 │   ├── sections/             # Homepage sections
@@ -275,10 +280,10 @@ src/
 │   ├── header.tsx            # Public site header
 │   ├── footer.tsx            # Public site footer
 │   ├── quote-builder.tsx     # Interactive quote calculator (used on /quote and homepage)
-│   ├── scroll-reveal.tsx     # Intersection Observer scroll reveal
-│   └── service-request-form.tsx
+│   └── scroll-reveal.tsx     # Intersection Observer scroll reveal
 ├── config/
-│   └── catalog.ts            # Equipment, oil, add-on, and pricing catalog
+│   ├── catalog.ts            # Equipment, oil, add-on, and pricing catalog
+│   └── service-area.ts       # Served cities, ZIP codes, and map coordinates
 ├── lib/
 │   ├── actions/              # Server Actions (status updates)
 │   ├── auth.ts               # Session and password utilities (Node.js)
@@ -290,6 +295,7 @@ src/
 │   ├── validations.ts        # Zod schemas
 │   └── utils.ts              # General utilities
 ├── middleware.ts              # Route protection middleware
+scripts/                       # Password hash generator, MapLibre worker copy
 prisma/
 ├── schema.prisma             # Database schema
 └── migrations/               # Migration history

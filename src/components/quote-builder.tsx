@@ -3,16 +3,29 @@
 import { useReducer } from "react";
 import { ArrowRight } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
-import { EQUIPMENT, OIL, ADD_ONS, FREQUENCY } from "@/config/catalog";
+import {
+  EQUIPMENT,
+  CAPACITY_TIERS,
+  OIL,
+  ADD_ONS,
+  FREQUENCY,
+} from "@/config/catalog";
 import { calculatePricing } from "@/lib/pricing";
 import { formatCents } from "@/lib/formatting";
-import type { EquipmentType, OilType, AddOn, Frequency } from "@/config/catalog";
+import type {
+  EquipmentType,
+  Capacity,
+  OilType,
+  AddOn,
+  Frequency,
+} from "@/config/catalog";
 import type { PricingBreakdown } from "@/lib/types";
 
 // ─── State ────────────────────────────────────────────────
 
 interface QuoteState {
   equipmentType: EquipmentType;
+  capacity: Capacity;
   oilType: OilType;
   addOns: AddOn[];
   frequency: Frequency;
@@ -20,12 +33,14 @@ interface QuoteState {
 
 type QuoteAction =
   | { type: "SET_EQUIPMENT"; value: EquipmentType }
+  | { type: "SET_CAPACITY"; value: Capacity }
   | { type: "SET_OIL"; value: OilType }
   | { type: "TOGGLE_ADDON"; value: AddOn }
   | { type: "SET_FREQUENCY"; value: Frequency };
 
 const INITIAL_STATE: QuoteState = {
   equipmentType: "COUNTERTOP_FRYER",
+  capacity: "UP_TO_5",
   oilType: "CANOLA",
   addOns: [],
   frequency: "ONE_TIME",
@@ -35,6 +50,8 @@ function quoteReducer(state: QuoteState, action: QuoteAction): QuoteState {
   switch (action.type) {
     case "SET_EQUIPMENT":
       return { ...state, equipmentType: action.value };
+    case "SET_CAPACITY":
+      return { ...state, capacity: action.value };
     case "SET_OIL":
       return { ...state, oilType: action.value };
     case "TOGGLE_ADDON": {
@@ -57,6 +74,16 @@ export const EQUIPMENT_LABELS: Record<EquipmentType, string> = {
   COUNTERTOP_FRYER: "Countertop Fryer",
   FLOOR_FRYER: "Floor Fryer",
   FRYER_BANK: "Fryer Bank",
+  BUILT_IN: "Built-In / Fixed",
+  OTHER: "Other / Custom",
+};
+
+export const CAPACITY_LABELS: Record<Capacity, string> = {
+  UP_TO_5: "Up to 5 gal",
+  RANGE_5_10: "5–10 gal",
+  RANGE_10_15: "10–15 gal",
+  RANGE_15_20: "15–20 gal",
+  OVER_20: "20+ gal",
 };
 
 export const OIL_LABELS: Record<OilType, string> = {
@@ -85,11 +112,22 @@ export const FREQUENCY_DESCRIPTIONS: Record<Frequency, string> = {
 // ─── Component ────────────────────────────────────────────
 
 interface QuoteBuilderProps {
+  initialFrequency?: Frequency;
   onContinue?: (pricing: PricingBreakdown) => void;
 }
 
-export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
-  const [state, dispatch] = useReducer(quoteReducer, INITIAL_STATE);
+export function QuoteBuilder({
+  initialFrequency = INITIAL_STATE.frequency,
+  onContinue,
+}: QuoteBuilderProps) {
+  const [state, dispatch] = useReducer(
+    quoteReducer,
+    initialFrequency,
+    (frequency): QuoteState => ({
+      ...INITIAL_STATE,
+      frequency,
+    }),
+  );
 
   let pricing: PricingBreakdown;
   try {
@@ -113,15 +151,15 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <div className="grid gap-8 lg:grid-cols-5 lg:gap-10">
+      <div className="grid min-w-0 gap-8 concept:grid-cols-5 concept:gap-10">
         {/* ── Configuration (left) ───────────────────────── */}
-        <div className="lg:col-span-3 space-y-8">
+        <div className="min-w-0 space-y-8 concept:col-span-3">
           {/* Equipment */}
           <fieldset>
             <legend className="mb-3 text-sm font-semibold text-text">
               Equipment type
             </legend>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 concept:grid-cols-3">
               {(Object.keys(EQUIPMENT) as EquipmentType[]).map((key) => (
                 <label
                   key={key}
@@ -140,7 +178,7 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
                     onChange={() =>
                       dispatch({ type: "SET_EQUIPMENT", value: key })
                     }
-                    className="sr-only"
+                    className="sr-only focus-visible:outline-none"
                   />
                   <span className="text-sm font-semibold">
                     {EQUIPMENT_LABELS[key]}
@@ -153,17 +191,53 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
                         : "text-text-muted",
                     ].join(" ")}
                   >
-                    {formatCents(EQUIPMENT[key]!.serviceFeeMinor)} service fee
+                    {EQUIPMENT[key]!.serviceFeeMinor === null
+                      ? "Custom quote"
+                      : `${formatCents(EQUIPMENT[key]!.serviceFeeMinor)} service fee`}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          {/* Capacity */}
+          <fieldset>
+            <legend className="mb-3 text-sm font-semibold text-text">
+              Frying capacity
+            </legend>
+            <div className="grid gap-3 concept:grid-cols-2">
+              {(Object.keys(CAPACITY_TIERS) as Capacity[]).map((key) => (
+                <label
+                  key={key}
+                  className={[
+                    "relative flex cursor-pointer items-center justify-between rounded-xl p-4 ring-1 transition-colors",
+                    state.capacity === key
+                      ? "bg-accent text-accent-foreground ring-accent"
+                      : "bg-surface-raised text-text ring-border hover:ring-accent/40",
+                  ].join(" ")}
+                >
+                  <input
+                    type="radio"
+                    name="capacity"
+                    value={key}
+                    checked={state.capacity === key}
+                    onChange={() =>
+                      dispatch({ type: "SET_CAPACITY", value: key })
+                    }
+                    className="sr-only focus-visible:outline-none"
+                  />
+                  <span className="text-sm font-semibold">
+                    {CAPACITY_LABELS[key]}
                   </span>
                   <span
                     className={[
                       "text-xs",
-                      state.equipmentType === key
+                      state.capacity === key
                         ? "text-accent-foreground/70"
                         : "text-text-muted",
                     ].join(" ")}
                   >
-                    {EQUIPMENT[key]!.capacityLitres} L capacity
+                    ≈ {CAPACITY_TIERS[key]!.estimateGallons} gal
                   </span>
                 </label>
               ))}
@@ -175,7 +249,7 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
             <legend className="mb-3 text-sm font-semibold text-text">
               Oil type
             </legend>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 concept:grid-cols-2">
               {(Object.keys(OIL) as OilType[]).map((key) => (
                 <label
                   key={key}
@@ -194,7 +268,7 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
                     onChange={() =>
                       dispatch({ type: "SET_OIL", value: key })
                     }
-                    className="sr-only"
+                    className="sr-only focus-visible:outline-none"
                   />
                   <span className="text-sm font-semibold">
                     {OIL_LABELS[key]}
@@ -207,7 +281,7 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
                         : "text-text-muted",
                     ].join(" ")}
                   >
-                    {formatCents(OIL[key]!.pricePerLitreMinor)} / L
+                    {formatCents(OIL[key]!.pricePerGallonMinor)} / gal
                   </span>
                 </label>
               ))}
@@ -266,7 +340,7 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
                         onChange={() =>
                           dispatch({ type: "TOGGLE_ADDON", value: key })
                         }
-                        className="sr-only"
+                        className="sr-only focus-visible:outline-none"
                       />
                       <span className="text-sm font-semibold">
                         {ADDON_LABELS[key]}
@@ -293,7 +367,7 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
             <legend className="mb-3 text-sm font-semibold text-text">
               Frequency
             </legend>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-3 concept:grid-cols-2">
               {(Object.keys(FREQUENCY) as Frequency[]).map((key) => (
                 <label
                   key={key}
@@ -312,11 +386,18 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
                     onChange={() =>
                       dispatch({ type: "SET_FREQUENCY", value: key })
                     }
-                    className="sr-only"
+                    className="sr-only focus-visible:outline-none"
                   />
-                  <span className="text-sm font-semibold">
-                    {FREQUENCY_LABELS[key]}
-                  </span>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-sm font-semibold">
+                      {FREQUENCY_LABELS[key]}
+                    </span>
+                    {key === "MONTHLY" && (
+                      <span className="shrink-0 rounded-full bg-primary px-2 py-0.5 text-[0.68rem] font-extrabold text-primary-foreground">
+                        Save 10%
+                      </span>
+                    )}
+                  </div>
                   <span
                     className={[
                       "mt-1 text-xs",
@@ -334,8 +415,8 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
         </div>
 
         {/* ── Pricing breakdown (right) ──────────────────── */}
-        <div className="lg:col-span-2">
-          <div className="sticky top-24 rounded-2xl bg-surface-raised p-6 ring-1 ring-border lg:p-8">
+        <div className="min-w-0 concept:col-span-2">
+          <div className="rounded-2xl bg-surface-raised p-6 ring-1 ring-border concept:sticky concept:top-24 concept:p-8">
             <h3 className="mb-5 text-h4 font-semibold text-text">
               Estimated quote
             </h3>
@@ -349,15 +430,17 @@ export function QuoteBuilder({ onContinue }: QuoteBuilderProps) {
               <div className="flex items-center justify-between">
                 <span className="text-text-muted">Service fee</span>
                 <span className="font-medium text-text">
-                  {formatCents(pricing.serviceFeeMinor)}
+                  {pricing.serviceFeeMinor === null
+                    ? "Custom quote"
+                    : formatCents(pricing.serviceFeeMinor)}
                 </span>
               </div>
 
               {/* Oil cost */}
               <div className="flex items-center justify-between">
                 <span className="text-text-muted">
-                  Oil ({EQUIPMENT[state.equipmentType]!.capacityLitres}L{" "}
-                  × {formatCents(OIL[state.oilType]!.pricePerLitreMinor)}/L)
+                  Oil ({pricing.oilGallons} gal ×{" "}
+                  {formatCents(OIL[state.oilType]!.pricePerGallonMinor)}/gal)
                 </span>
                 <span className="font-medium text-text">
                   {formatCents(pricing.oilCostMinor)}

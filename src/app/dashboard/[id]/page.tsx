@@ -1,9 +1,16 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
+import type { Metadata } from "next";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { getSessionUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { formatDate } from "@/lib/formatting";
+import { buttonVariants } from "@/components/ui/button";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 import { StatusBadge } from "@/components/dashboard/status-badge";
 import { StatusControl } from "@/components/dashboard/status-control";
 import { QuotationDetails } from "@/components/dashboard/quotation-details";
@@ -45,6 +52,7 @@ export default async function EnquiryDetailPage(
         quotation: {
           select: {
             equipmentType: true,
+            capacity: true,
             oilType: true,
             addOns: true,
             frequency: true,
@@ -132,17 +140,41 @@ export default async function EnquiryDetailPage(
                 <dt className="min-w-[80px] text-text-muted">Name</dt>
                 <dd className="font-medium text-text">{enquiry.name}</dd>
               </div>
-              <div className="flex flex-col gap-1 sm:flex-row sm:gap-4">
-                <dt className="min-w-[80px] text-text-muted">Email</dt>
-                <dd className="font-medium text-text break-all">
-                  {enquiry.email}
-                </dd>
-              </div>
-              <div className="flex flex-col gap-1 sm:flex-row sm:gap-4">
-                <dt className="min-w-[80px] text-text-muted">Phone</dt>
-                <dd className="font-medium text-text">{enquiry.phone}</dd>
-              </div>
+              {enquiry.email && (
+                <div className="flex flex-col gap-1 sm:flex-row sm:gap-4">
+                  <dt className="min-w-[80px] text-text-muted">Email</dt>
+                  <dd className="font-medium text-text break-all">
+                    {enquiry.email}
+                  </dd>
+                </div>
+              )}
+              {enquiry.phone && (
+                <div className="flex flex-col gap-1 sm:flex-row sm:gap-4">
+                  <dt className="min-w-[80px] text-text-muted">Phone</dt>
+                  <dd className="font-medium text-text">{enquiry.phone}</dd>
+                </div>
+              )}
             </dl>
+            <div className="mt-4 flex flex-wrap gap-2.5">
+              {enquiry.phone && (
+                <a
+                  href={`tel:${enquiry.phone}`}
+                  className={buttonVariants({ variant: "outline" })}
+                >
+                  <Phone aria-hidden="true" />
+                  Call Customer
+                </a>
+              )}
+              {enquiry.email && (
+                <a
+                  href={`mailto:${enquiry.email}`}
+                  className={buttonVariants({ variant: "outline" })}
+                >
+                  <Mail aria-hidden="true" />
+                  Email Customer
+                </a>
+              )}
+            </div>
           </div>
         </section>
 
@@ -168,17 +200,30 @@ export default async function EnquiryDetailPage(
                     </dd>
                   </div>
                 )}
-                {enquiry.preferredDate && (
-                  <div className="flex flex-col gap-1 sm:flex-row sm:gap-4">
-                    <dt className="min-w-[80px] text-text-muted">
-                      Preferred date
-                    </dt>
-                    <dd className="font-medium text-text">
-                      {formatDate(enquiry.preferredDate)}
-                    </dd>
-                  </div>
-                )}
+                <div className="flex flex-col gap-1 sm:flex-row sm:gap-4">
+                  <dt className="min-w-[80px] text-text-muted">
+                    Preferred date
+                  </dt>
+                  <dd className="font-medium text-text">
+                    {enquiry.preferredDate
+                      ? formatDate(enquiry.preferredDate)
+                      : "Not specified"}
+                  </dd>
+                </div>
               </dl>
+              {enquiry.venueAddress && (
+                <div className="mt-4 flex flex-wrap gap-2.5">
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(enquiry.venueAddress)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={buttonVariants({ variant: "outline" })}
+                  >
+                    <MapPin aria-hidden="true" />
+                    Get Directions
+                  </a>
+                </div>
+              )}
             </div>
           </section>
         )}

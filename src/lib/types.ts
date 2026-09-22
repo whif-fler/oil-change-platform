@@ -5,13 +5,20 @@
  * These types cover client↔API boundaries and pricing engine I/O.
  */
 
-import type { EquipmentType, OilType, AddOn, Frequency } from "@/config/catalog";
+import type {
+  EquipmentType,
+  Capacity,
+  OilType,
+  AddOn,
+  Frequency,
+} from "@/config/catalog";
 
 // ─── Service Configuration (client selections) ─────────────
 
 /** What the client sends to describe a service configuration. */
 export interface ServiceConfig {
   equipmentType: EquipmentType;
+  capacity: Capacity;
   oilType: OilType;
   addOns: AddOn[];
   frequency: Frequency;
@@ -21,7 +28,13 @@ export interface ServiceConfig {
 
 /** Line-item breakdown returned by the pricing engine. */
 export interface PricingBreakdown {
-  serviceFeeMinor: number;
+  /**
+   * Service fee in minor units, or null for custom-quote equipment
+   * where the fee is agreed after review (not estimated).
+   */
+  serviceFeeMinor: number | null;
+  /** Gallons used for the oil-cost estimate (from the capacity tier). */
+  oilGallons: number;
   oilCostMinor: number;
   addOnCostsMinor: { addOn: AddOn; costMinor: number }[];
   subtotalMinor: number;

@@ -17,12 +17,25 @@ import { calculatePricing } from "@/lib/pricing";
 import { formatCents } from "@/lib/formatting";
 import {
   EQUIPMENT_LABELS,
+  CAPACITY_LABELS,
   OIL_LABELS,
   ADDON_LABELS,
   FREQUENCY_LABELS,
 } from "@/components/quote-builder";
-import { EQUIPMENT, OIL, ADD_ONS, FREQUENCY } from "@/config/catalog";
-import type { EquipmentType, OilType, AddOn, Frequency } from "@/config/catalog";
+import {
+  EQUIPMENT,
+  CAPACITY_TIERS,
+  OIL,
+  ADD_ONS,
+  FREQUENCY,
+} from "@/config/catalog";
+import type {
+  EquipmentType,
+  Capacity,
+  OilType,
+  AddOn,
+  Frequency,
+} from "@/config/catalog";
 import type { PricingBreakdown, ServiceConfig } from "@/lib/types";
 
 // ─── Config decoding ─────────────────────────────────────
@@ -34,6 +47,7 @@ function decodeConfig(raw: string): ServiceConfig | null {
       typeof json !== "object" ||
       json === null ||
       typeof json.equipmentType !== "string" ||
+      typeof json.capacity !== "string" ||
       typeof json.oilType !== "string" ||
       !Array.isArray(json.addOns) ||
       typeof json.frequency !== "string"
@@ -41,6 +55,7 @@ function decodeConfig(raw: string): ServiceConfig | null {
       return null;
     }
     if (!(json.equipmentType in EQUIPMENT)) return null;
+    if (!(json.capacity in CAPACITY_TIERS)) return null;
     if (!(json.oilType in OIL)) return null;
     if (!(json.frequency in FREQUENCY)) return null;
     for (const addOn of json.addOns) {
@@ -48,6 +63,7 @@ function decodeConfig(raw: string): ServiceConfig | null {
     }
     return {
       equipmentType: json.equipmentType as EquipmentType,
+      capacity: json.capacity as Capacity,
       oilType: json.oilType as OilType,
       addOns: json.addOns as AddOn[],
       frequency: json.frequency as Frequency,
@@ -77,6 +93,10 @@ function formatEquipmentLabel(type: EquipmentType): string {
   return EQUIPMENT_LABELS[type] ?? type;
 }
 
+function formatCapacityLabel(capacity: Capacity): string {
+  return CAPACITY_LABELS[capacity] ?? capacity;
+}
+
 function formatOilLabel(type: OilType): string {
   return OIL_LABELS[type] ?? type;
 }
@@ -88,7 +108,7 @@ export default function RequestPage() {
     <Suspense
       fallback={
         <section className="bg-surface py-[var(--section-py-mobile)] lg:py-[var(--section-py-desktop)]">
-          <div className="mx-auto max-w-lg px-[var(--shell-px-mobile)] text-center lg:px-[var(--shell-px-desktop)]">
+          <div className="mx-auto max-w-lg px-[var(--shell-px-mobile)] text-center">
             <p className="text-body text-text-muted">Loading…</p>
           </div>
         </section>
@@ -112,7 +132,7 @@ function RequestPageContent() {
   if (!config) {
     return (
       <section className="bg-surface py-[var(--section-py-mobile)] lg:py-[var(--section-py-desktop)]">
-        <div className="mx-auto max-w-lg px-[var(--shell-px-mobile)] text-center lg:px-[var(--shell-px-desktop)]">
+        <div className="mx-auto max-w-lg px-[var(--shell-px-mobile)] text-center">
           <div className="rounded-2xl bg-surface-raised p-8 ring-1 ring-border shadow-card">
             <div className="mb-4 inline-flex size-16 items-center justify-center rounded-full bg-surface-muted">
               <FileText className="size-8 text-text-muted" aria-hidden="true" />
@@ -154,7 +174,7 @@ function RequestForm({ config }: { config: ServiceConfig }) {
   } catch {
     return (
       <section className="bg-surface py-[var(--section-py-mobile)] lg:py-[var(--section-py-desktop)]">
-        <div className="mx-auto max-w-lg px-[var(--shell-px-mobile)] text-center lg:px-[var(--shell-px-desktop)]">
+        <div className="mx-auto max-w-lg px-[var(--shell-px-mobile)] text-center">
           <p className="text-destructive">
             Unable to calculate pricing. Please{' '}
             <Link href="/quote" className="underline">
@@ -236,8 +256,8 @@ function RequestForm({ config }: { config: ServiceConfig }) {
   if (status === "success") {
     return (
       <section className="bg-surface py-[var(--section-py-mobile)] lg:py-[var(--section-py-desktop)]">
-        <div className="mx-auto max-w-lg px-[var(--shell-px-mobile)] lg:px-[var(--shell-px-desktop)]">
-          <div className="rounded-2xl bg-surface-raised p-6 ring-1 ring-border shadow-card lg:p-8">
+        <div className="mx-auto max-w-lg px-[var(--shell-px-mobile)]">
+          <div className="rounded-2xl bg-surface-raised p-6 ring-1 ring-border shadow-card concept:p-8">
             <div className="mb-6 text-center">
               <div className="mb-4 inline-flex size-16 items-center justify-center rounded-full bg-success/10">
                 <CheckCircle
@@ -257,7 +277,8 @@ function RequestForm({ config }: { config: ServiceConfig }) {
 
             <div className="mb-6 rounded-xl bg-surface-muted p-4 text-sm">
               <p className="mb-1 font-semibold text-text">
-                {formatEquipmentLabel(config.equipmentType)} —{" "}
+                {formatEquipmentLabel(config.equipmentType)} (
+                {formatCapacityLabel(config.capacity)}) —{" "}
                 {formatOilLabel(config.oilType)}
               </p>
               <p className="text-text-muted">
@@ -308,8 +329,8 @@ function RequestForm({ config }: { config: ServiceConfig }) {
 
   return (
     <section className="bg-surface py-[var(--section-py-mobile)] lg:py-[var(--section-py-desktop)]">
-      <div className="mx-auto max-w-[var(--shell-max-w)] px-[var(--shell-px-mobile)] lg:px-[var(--shell-px-desktop)]">
-        <div className="mb-12 text-center lg:mb-16">
+      <div className="mx-auto max-w-[var(--shell-max-w)] px-[var(--shell-px-mobile)]">
+        <div className="mb-14 text-center">
           <h1 className="mb-4 text-h2 font-semibold leading-[var(--lh-h2)] tracking-[var(--ls-h2)] text-text">
             Request your service
           </h1>
@@ -318,10 +339,10 @@ function RequestForm({ config }: { config: ServiceConfig }) {
           </p>
         </div>
 
-        <div className="mx-auto grid max-w-4xl gap-8 lg:grid-cols-5 lg:gap-10">
+        <div className="mx-auto grid max-w-4xl gap-8 concept:grid-cols-5 concept:gap-10">
           {/* ── Estimate summary (left) ─────────────────── */}
-          <div className="lg:col-span-2">
-            <div className="sticky top-24 rounded-2xl bg-surface-raised p-6 ring-1 ring-border shadow-card lg:p-8">
+          <div className="concept:col-span-2">
+            <div className="sticky top-24 rounded-2xl bg-surface-raised p-6 ring-1 ring-border shadow-card concept:p-8">
               <h2 className="mb-5 text-h4 font-semibold text-text">
                 Your estimate
               </h2>
@@ -331,6 +352,12 @@ function RequestForm({ config }: { config: ServiceConfig }) {
                   <span className="text-text-muted">Equipment</span>
                   <p className="font-medium text-text">
                     {formatEquipmentLabel(config.equipmentType)}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-text-muted">Capacity</span>
+                  <p className="font-medium text-text">
+                    {formatCapacityLabel(config.capacity)}
                   </p>
                 </div>
                 <div>
@@ -357,14 +384,21 @@ function RequestForm({ config }: { config: ServiceConfig }) {
                 <div className="border-t border-border pt-3">
                   <div className="flex items-center justify-between">
                     <span className="text-text-muted">Service fee</span>
-                    <span className="font-medium text-text">
-                      {formatCents(pricing.serviceFeeMinor)}
-                    </span>
+                    {pricing.serviceFeeMinor !== null ? (
+                      <span className="font-medium text-text">
+                        {formatCents(pricing.serviceFeeMinor)}
+                      </span>
+                    ) : (
+                      <span className="font-medium text-text">
+                        Custom quote
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-text-muted">
-                    Oil ({EQUIPMENT[config.equipmentType]!.capacityLitres}L)
+                    Oil (
+                    {CAPACITY_TIERS[config.capacity]!.estimateGallons} gal)
                   </span>
                   <span className="font-medium text-text">
                     {formatCents(pricing.oilCostMinor)}
@@ -411,7 +445,7 @@ function RequestForm({ config }: { config: ServiceConfig }) {
           </div>
 
           {/* ── Request form (right) ────────────────────── */}
-          <div className="lg:col-span-3">
+          <div className="concept:col-span-3">
             <form onSubmit={handleSubmit} noValidate className="space-y-6">
               {/* Customer details */}
               <fieldset>
@@ -596,7 +630,7 @@ function RequestForm({ config }: { config: ServiceConfig }) {
                   maxLength={2000}
                   placeholder="Anything else we should know?"
                   disabled={status === "submitting"}
-                  className="flex w-full min-w-0 rounded-lg border border-input bg-transparent px-3 py-2 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                  className="flex w-full min-w-0 rounded-lg border border-input bg-transparent px-3 py-2 text-base transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:outline-none focus-visible:outline-offset-0 focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                   aria-invalid={!!fieldErrors["message"]}
                   aria-describedby={
                     fieldErrors["message"] ? "error-rq-message" : undefined

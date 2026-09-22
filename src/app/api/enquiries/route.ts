@@ -8,7 +8,13 @@ import type {
   QuestionEnquiryPayload,
   ServiceRequestEnquiryPayload,
 } from "@/lib/types";
-import type { EquipmentType, OilType, AddOn, Frequency } from "@prisma/client";
+import type {
+  EquipmentType,
+  Capacity,
+  OilType,
+  AddOn,
+  Frequency,
+} from "@prisma/client";
 
 // ─── Helpers ───────────────────────────────────────────────
 
@@ -169,6 +175,7 @@ async function createServiceRequestEnquiry(
     const quotation = await tx.quotation.create({
       data: {
         equipmentType: payload.service.equipmentType as EquipmentType,
+        capacity: payload.service.capacity as Capacity,
         oilType: payload.service.oilType as OilType,
         addOns: payload.service.addOns as AddOn[],
         frequency: payload.service.frequency as Frequency,
