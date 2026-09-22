@@ -6,10 +6,10 @@ import { Menu, X } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 
 const NAV_LINKS = [
-  { label: "Services", href: "#services" },
-  { label: "How It Works", href: "#how-it-works" },
+  { label: "Services", href: "/#services" },
+  { label: "How It Works", href: "/#how-it-works" },
   { label: "About", href: "/about" },
-  { label: "Contact", href: "#contact" },
+  { label: "Contact", href: "/#contact" },
 ] as const;
 
 function getFocusableElements(container: HTMLElement): HTMLElement[] {

@@ -7,8 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { ServiceRequestForm } from "@/components/service-request-form";
-import type { PricingBreakdown } from "@/lib/types";
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
 
@@ -16,12 +14,7 @@ interface FieldErrors {
   [key: string]: string[];
 }
 
-interface ContactProps {
-  submittedQuote: PricingBreakdown | null;
-  onResetQuote: () => void;
-}
-
-export function Contact({ submittedQuote, onResetQuote }: ContactProps) {
+export function Contact() {
   const [status, setStatus] = useState<FormStatus>("idle");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [serverError, setServerError] = useState("");
@@ -82,24 +75,6 @@ export function Contact({ submittedQuote, onResetQuote }: ContactProps) {
         setStatus("error");
       }
     });
-  }
-
-  // ── Service request mode ────────────────────────────────
-
-  if (submittedQuote) {
-    return (
-      <section
-        id="contact"
-        className="bg-surface py-[var(--section-py-mobile)] lg:py-[var(--section-py-desktop)]"
-      >
-        <div className="mx-auto max-w-[var(--shell-max-w)] px-[var(--shell-px-mobile)] lg:px-[var(--shell-px-desktop)]">
-          <ServiceRequestForm
-            pricing={submittedQuote}
-            onComplete={onResetQuote}
-          />
-        </div>
-      </section>
-    );
   }
 
   // ── Success state ───────────────────────────────────────

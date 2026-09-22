@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Hero } from "@/components/sections/hero";
 import { Services } from "@/components/sections/services";
 import { HowItWorks } from "@/components/sections/how-it-works";
@@ -11,18 +11,16 @@ import { Contact } from "@/components/sections/contact";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import type { PricingBreakdown } from "@/lib/types";
 
+function encodeConfig(config: PricingBreakdown["config"]): string {
+  return btoa(JSON.stringify(config));
+}
+
 export default function Home() {
-  const [submittedQuote, setSubmittedQuote] =
-    useState<PricingBreakdown | null>(null);
+  const router = useRouter();
 
   const handleContinueToRequest = (pricing: PricingBreakdown) => {
-    setSubmittedQuote(pricing);
-  };
-
-  const handleResetQuote = () => {
-    setSubmittedQuote(null);
-    const el = document.getElementById("quote-builder");
-    el?.scrollIntoView({ behavior: "smooth" });
+    const encoded = encodeConfig(pricing.config);
+    router.push(`/request?config=${encoded}`);
   };
 
   return (
@@ -41,10 +39,7 @@ export default function Home() {
         <QuoteCta />
       </ScrollReveal>
       <QuoteBuilderSection onContinue={handleContinueToRequest} />
-      <Contact
-        submittedQuote={submittedQuote}
-        onResetQuote={handleResetQuote}
-      />
+      <Contact />
     </>
   );
 }
