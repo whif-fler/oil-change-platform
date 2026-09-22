@@ -118,7 +118,7 @@ export function verifySessionCookie(cookieValue: string): string | null {
   const sigBuffer = Buffer.from(signature, "hex");
   const expectedBuffer = Buffer.from(expectedSignature, "hex");
 
-  if (sigBuffer.length !== expectedBuffer.length) return false as unknown as null;
+  if (sigBuffer.length !== expectedBuffer.length) return null;
 
   if (!crypto.timingSafeEqual(sigBuffer, expectedBuffer)) return null;
 

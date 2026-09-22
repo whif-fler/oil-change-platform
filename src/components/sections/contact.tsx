@@ -290,7 +290,7 @@ export function Contact({ submittedQuote, onResetQuote }: ContactProps) {
 
             <div>
               <p className="mb-1 font-semibold text-text">Phone</p>
-              <p>(02) 1234 5678</p>
+              <p>(555) 123-4567</p>
             </div>
 
             <Separator />

@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 const SERVICE_LINKS = [
-  { label: "Oil Change", href: "#services" },
-  { label: "Deep Cleaning", href: "#services" },
-  { label: "Filter Replacement", href: "#services" },
-  { label: "Waste-Oil Disposal", href: "#services" },
+  { label: "Oil Change", href: "/#services" },
+  { label: "Deep Cleaning", href: "/#services" },
+  { label: "Filter Replacement", href: "/#services" },
+  { label: "Waste-Oil Disposal", href: "/#services" },
 ] as const;
 
 const COMPANY_LINKS = [
@@ -43,12 +43,12 @@ export function Footer() {
             <ul className="space-y-2">
               {SERVICE_LINKS.map((link) => (
                 <li key={link.label}>
-                  <a
+                  <Link
                     href={link.href}
                     className="text-sm text-text-on-dark/60 transition-colors hover:text-text-on-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -95,7 +95,7 @@ export function Footer() {
               </li>
               <li>
                 <span className="text-sm text-text-on-dark/60">
-                  (02) 1234 5678
+                  (555) 123-4567
                 </span>
               </li>
             </ul>

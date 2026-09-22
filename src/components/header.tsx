@@ -34,12 +34,9 @@ export function Header() {
     if (!menuOpen || !menuRef.current) return;
 
     const menu = menuRef.current;
-    // Focus the close button (X icon button) inside the menu, or first focusable element
     const focusable = getFocusableElements(menu);
     if (focusable.length > 0) {
-      // Find the close button (it has aria-label "Close menu")
-      const closeBtn = menu.querySelector<HTMLElement>('button[aria-label="Close menu"]');
-      (closeBtn ?? focusable[0]!).focus();
+      focusable[0]!.focus();
     }
   }, [menuOpen]);
 
@@ -189,15 +186,6 @@ export function Header() {
           className="border-t border-white/10 px-[var(--shell-px-mobile)] pb-6 pt-4 md:hidden"
           aria-label="Mobile"
         >
-          <button
-            type="button"
-            aria-label="Close menu"
-            className="sr-only"
-            onClick={() => {
-              closeMenu();
-              triggerRef.current?.focus();
-            }}
-          />
           <ul className="flex flex-col gap-4">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>
