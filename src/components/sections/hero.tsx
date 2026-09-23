@@ -5,7 +5,7 @@ import { buttonVariants } from "@/components/ui/button";
 export function Hero() {
   return (
     <section className="px-6 pt-6 pb-6">
-      <div className="relative mx-auto max-w-[var(--shell-max-w)] overflow-hidden rounded-[var(--radius-hero-token)] bg-[radial-gradient(circle_at_15%_20%,rgba(216,255,52,0.16),transparent_40%),radial-gradient(circle_at_85%_75%,rgba(52,79,61,0.9),transparent_55%),radial-gradient(circle_at_75%_15%,rgba(36,58,45,0.85),transparent_50%),linear-gradient(135deg,#17241C_0%,#1E2F24_45%,#243A2D_100%)] px-12 py-16">
+      <div className="relative mx-auto max-w-[var(--shell-max-w)] overflow-hidden rounded-[var(--radius-hero-token)] bg-[radial-gradient(circle_at_15%_20%,rgba(216,255,52,0.16),transparent_40%),radial-gradient(circle_at_85%_75%,rgba(52,79,61,0.9),transparent_55%),radial-gradient(circle_at_75%_15%,rgba(36,58,45,0.85),transparent_50%),linear-gradient(135deg,#17241C_0%,#1E2F24_45%,#243A2D_100%)] px-6 py-12 concept:px-12 concept:py-16">
         <div className="relative z-[2] grid items-center gap-12 concept:grid-cols-2">
           {/* Text */}
           <div className="relative z-10">
@@ -84,13 +84,14 @@ export function Hero() {
                 />
               </div>
 
-              {/* Float card 1 — top right */}
-              <div className="absolute -right-6 -top-[22px] z-10 block rounded-[var(--radius-panel-token)] border border-white/[0.12] bg-[rgba(23,36,28,0.85)] p-3.5 shadow-[0_12px_30px_rgba(0,0,0,0.3)] backdrop-blur-[8px]">
-                <div className="mb-1 flex items-center gap-2">
-                  <span className="flex size-[22px] items-center justify-center rounded-[6px] bg-primary text-[0.75rem] font-extrabold text-primary-foreground">
+              {/* Float card 1 — top right. Scaled down below the sm (640px)
+                  breakpoint; original floating size/offsets from sm up. */}
+              <div className="absolute -right-4 -top-4 z-10 block max-w-[164px] rounded-[var(--radius-panel-token)] border border-white/[0.12] bg-[rgba(23,36,28,0.85)] p-2 shadow-[0_12px_30px_rgba(0,0,0,0.3)] backdrop-blur-[8px] sm:-right-6 sm:-top-[22px] sm:max-w-none sm:p-3.5">
+                <div className="mb-1 flex items-center gap-1.5 sm:gap-2">
+                  <span className="flex size-[18px] sm:size-[22px] items-center justify-center rounded-[6px] bg-primary text-[0.65rem] sm:text-[0.75rem] font-extrabold text-primary-foreground">
                     ✓
                   </span>
-                  <span className="text-[0.8rem] font-bold text-text-on-dark">
+                  <span className="text-[0.7rem] sm:text-[0.8rem] font-bold text-text-on-dark">
                     On time, every time
                   </span>
                 </div>
@@ -99,13 +100,14 @@ export function Hero() {
                 </p>
               </div>
 
-              {/* Float card 2 — bottom left */}
-              <div className="absolute -bottom-[22px] -left-6 z-10 block rounded-[var(--radius-panel-token)] border border-white/[0.12] bg-[rgba(23,36,28,0.85)] p-3.5 shadow-[0_12px_30px_rgba(0,0,0,0.3)] backdrop-blur-[8px]">
-                <div className="mb-1 flex items-center gap-2">
-                  <span className="flex size-[22px] items-center justify-center rounded-[6px] bg-primary text-[0.75rem] font-extrabold text-primary-foreground">
+              {/* Float card 2 — bottom left. Scaled down below the sm (640px)
+                  breakpoint; original floating size/offsets from sm up. */}
+              <div className="absolute -bottom-4 -left-4 z-10 block max-w-[164px] rounded-[var(--radius-panel-token)] border border-white/[0.12] bg-[rgba(23,36,28,0.85)] p-2 shadow-[0_12px_30px_rgba(0,0,0,0.3)] backdrop-blur-[8px] sm:-bottom-[22px] sm:-left-6 sm:max-w-none sm:p-3.5">
+                <div className="mb-1 flex items-center gap-1.5 sm:gap-2">
+                  <span className="flex size-[18px] sm:size-[22px] items-center justify-center rounded-[6px] bg-primary text-[0.65rem] sm:text-[0.75rem] font-extrabold text-primary-foreground">
                     $
                   </span>
-                  <span className="text-[0.8rem] font-bold text-text-on-dark">
+                  <span className="text-[0.7rem] sm:text-[0.8rem] font-bold text-text-on-dark">
                     Upfront pricing
                   </span>
                 </div>

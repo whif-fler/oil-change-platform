@@ -58,7 +58,7 @@ export function StatusControl({
           <SelectPrimitive.Label className="mb-2 text-sm font-semibold text-text sm:mb-0">
             Status
           </SelectPrimitive.Label>
-          <SelectPrimitive.Trigger className="flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-border bg-surface-raised px-3 text-sm text-text outline-none transition-colors hover:bg-surface-muted focus-visible:border-focus focus-visible:outline-none focus-visible:outline-offset-0 focus-visible:ring-3 focus-visible:ring-focus/50 disabled:cursor-not-allowed disabled:opacity-50 data-[open]:border-focus data-[open]:ring-3 data-[open]:ring-focus/50 sm:w-auto sm:min-w-[180px]">
+          <SelectPrimitive.Trigger className="flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-border bg-surface-raised px-3 text-sm text-text outline-none transition-colors hover:bg-surface-muted active:bg-surface-muted/80 focus-visible:border-focus focus-visible:outline-none focus-visible:outline-offset-0 focus-visible:ring-3 focus-visible:ring-focus/50 disabled:cursor-not-allowed disabled:opacity-50 data-[popup-open]:border-focus data-[popup-open]:ring-3 data-[popup-open]:ring-focus/50 sm:w-auto sm:min-w-[180px]">
             <SelectPrimitive.Value>
               {(value: string | null) =>
                 STATUSES.find((s) => s.value === value)?.label ?? ""

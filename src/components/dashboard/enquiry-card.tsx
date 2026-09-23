@@ -43,12 +43,12 @@ export function EnquiryCard({ enquiry }: { enquiry: EnquiryRow }) {
     <article className="block rounded-xl bg-surface-raised ring-1 ring-border">
       <Link
         href={`/dashboard/${id}`}
-        className="flex flex-col gap-3 p-4 focus-visible:outline-3 focus-visible:outline-focus focus-visible:outline-offset-2"
+        className="flex flex-col gap-3 p-4 rounded-xl transition-colors hover:bg-surface-muted active:bg-surface-muted/80 focus-visible:outline-3 focus-visible:outline-focus focus-visible:outline-offset-2"
         aria-label={`View enquiry from ${name}, status: ${status}`}
       >
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <h3 className="truncate text-body font-semibold text-text">{name}</h3>
+            <h2 className="truncate text-body font-semibold text-text">{name}</h2>
             <p className="mt-0.5 text-xs text-text-muted">{formatDate(createdAt)}</p>
           </div>
           <StatusBadge status={status} />

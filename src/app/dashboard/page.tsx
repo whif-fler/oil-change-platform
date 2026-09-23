@@ -108,7 +108,7 @@ export default function DashboardPage() {
       <DashboardHeader />
       <main className="mx-auto max-w-5xl px-[var(--shell-px-mobile)] py-8">
         <div className="mb-6">
-          <h2 className="text-h3 font-semibold text-text">Enquiries</h2>
+          <h1 className="text-h3 font-semibold text-text">Enquiries</h1>
         </div>
         <Suspense fallback={<EnquiryListSkeleton />}>
           <EnquiryList />
